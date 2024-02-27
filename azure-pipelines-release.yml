@@ -1,0 +1,55 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+- name: solution
+  value: '**/*.sln'
+- name: buildPlatform
+  value: 'Any CPU'
+- name: buildConfiguration
+  value: 'Release'
+
+name: 1.0.$(date:yyMM).$(date:dd)$(rev:r)
+steps:
+
+- task: NuGetToolInstaller@1
+  displayName: Install Latest Nuget
+
+- task: NuGetCommand@2
+  displayName: Nuget Restore
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  displayName: Build Solution 
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:Version=$(Build.BuildNumber) /p:AssemblyVersion=$(Build.BuildNumber) /p:FileVersion=$(Build.BuildNumber)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: CopyFiles@2
+  displayName: Copy nupkg files to staging
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/DSoft.*.nupkg'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: Punlish artifacts
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

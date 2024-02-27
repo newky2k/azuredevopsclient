@@ -1,0 +1,37 @@
+<Project>
+ <PropertyGroup>
+   <GenerateDocumentationFile>true</GenerateDocumentationFile>
+   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+   <RepositoryUrl>https://github.com/newky2k/azuredevopsclient</RepositoryUrl>
+   <RepositoryType>git</RepositoryType>
+   <ImplicitUsings>enable</ImplicitUsings>
+   <LangVersion>Latest</LangVersion>
+ </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)'=='Release'">
+    <!-- sourcelink: Declare that the Repository URL can be published to NuSpec -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- sourcelink: Embed source files that are not tracked by the source control manager to the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- sourcelink: Include PDB in the built .nupkg -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Configuration)'=='Release'">
+	  <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildProjectDirectory)\DSoft.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+</Project>
