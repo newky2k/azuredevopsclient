@@ -20,7 +20,7 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 
-name: 1.0.$(date:yyMM).$(date:dd)$(rev:r)
+name: 0.9.$(date:yyMM).$(date:dd)$(rev:r)
 steps:
 
 - task: NuGetToolInstaller@1
