@@ -10,19 +10,47 @@ namespace DSoft.AzureDevOps.Services.Client
     /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsConnectionBase" />
     public sealed class AzureDevOpsServerConnection : DevOpsConnectionBase
     {
-        private string _instanceUrl;
-
-        protected override string BaseUrl => _instanceUrl;
-
-        internal override string FeedsApiUrl => $"{CommonUrl}/_apis/";
-
-        internal override string CommonUrl => $"{BaseUrl}/{OrganisationName}/";
-
-		internal override string NugetPackagesApiUrl => $"{BaseUrl}/{OrganisationName}/";
-
+        #region Fields
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AzureDevOpsServerConnection"/> class.
+        /// The instance URL
+        /// </summary>
+        private string _instanceUrl;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the base URL.
+        /// </summary>
+        /// <value>The base URL.</value>
+        protected override string BaseUrl => _instanceUrl;
+
+        /// <summary>
+        /// Gets the feeds API URL.
+        /// </summary>
+        /// <value>The feeds API URL.</value>
+        internal override string FeedsApiUrl => $"{CommonUrl}/_apis/";
+
+        /// <summary>
+        /// Gets the common URL.
+        /// </summary>
+        /// <value>The common URL.</value>
+        internal override string CommonUrl => $"{BaseUrl}/{OrganisationName}/";
+
+        /// <summary>
+        /// Gets the nuget packages API URL.
+        /// </summary>
+        /// <value>The nuget packages API URL.</value>
+        internal override string NugetPackagesApiUrl => $"{BaseUrl}/{OrganisationName}/";
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AzureDevOpsServerConnection" /> class.
         /// </summary>
         /// <param name="instanceUrl">The main URL of the On-Pemise Azure DevOps Service instance</param>
         /// <param name="collectionName">Name of the collection</param>
@@ -31,5 +59,7 @@ namespace DSoft.AzureDevOps.Services.Client
         {
             _instanceUrl = instanceUrl;
         }
+
+        #endregion
     }
 }

@@ -8,24 +8,43 @@ using DSoft.AzureDevOps.Services.Client.Models;
 
 namespace DSoft.AzureDevOps.Services.Client
 {
-	public class PackageManagementHttpClient : DevOpsHttpClientBase
+    /// <summary>
+    /// HttpClient for Package Management
+    /// Implements the <see cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    /// </summary>
+    /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    public class PackageManagementHttpClient : DevOpsHttpClientBase
 	{
-		#region Abstract
-		internal override string TestUrl => $"{Connection.FeedsApiUrl}/packaging/feeds?api-version=5.0-preview.1";
-		#endregion
+        #region Abstract
+        /// <summary>
+        /// Gets the test URL.
+        /// </summary>
+        /// <value>The test URL.</value>
+        internal override string TestUrl => $"{Connection.FeedsApiUrl}/packaging/feeds?api-version=5.0-preview.1";
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		internal PackageManagementHttpClient(DevOpsConnectionBase connection) : base(connection, ApiType.Nuget)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PackageManagementHttpClient"/> class.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        internal PackageManagementHttpClient(DevOpsConnectionBase connection) : base(connection, ApiType.Nuget)
 		{
 
 		}
 
-		#endregion
+        #endregion
 
-		#region Public Methods
+        #region Public Methods
 
-		public async Task<string> GetNugetBasePathAsync(string feedName, string projectName = null)
+        /// <summary>
+        /// Get nuget base path as an asynchronous operation.
+        /// </summary>
+        /// <param name="feedName">Name of the feed.</param>
+        /// <param name="projectName">Name of the project.</param>
+        /// <returns>A Task&lt;System.String&gt; representing the asynchronous operation.</returns>
+        public async Task<string> GetNugetBasePathAsync(string feedName, string projectName = null)
         {
             using (var wclient = Client)
             {
@@ -65,6 +84,15 @@ namespace DSoft.AzureDevOps.Services.Client
             return null;
         }
 
+        /// <summary>
+        /// Download nuget package as an asynchronous operation.
+        /// </summary>
+        /// <param name="baseUrl">The base URL.</param>
+        /// <param name="packageName">Name of the package.</param>
+        /// <param name="packageVersion">The package version.</param>
+        /// <param name="outPutFileName">Name of the out put file.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
         public async Task DownloadNugetPackageAsync(string baseUrl, string packageName, string packageVersion, string outPutFileName)
         {
             var tries = 0;
@@ -99,10 +127,17 @@ namespace DSoft.AzureDevOps.Services.Client
         }
 
 
-		#endregion
+        #endregion
 
-		#region Private Methods
-		private string GetNuGetUrl(string feedName,string projectName = null)
+        #region Private Methods
+        /// <summary>
+        /// Gets the nu get URL.
+        /// </summary>
+        /// <param name="feedName">Name of the feed.</param>
+        /// <param name="projectName">Name of the project.</param>
+        /// <returns>System.String.</returns>
+        /// <exception cref="System.Exception">Unexpected connection type</exception>
+        private string GetNuGetUrl(string feedName,string projectName = null)
 		{
 			if (Connection is AzureDevOpsCloudConnection)
 			{

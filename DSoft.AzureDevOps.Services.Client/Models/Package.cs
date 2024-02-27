@@ -5,30 +5,64 @@ using System.Text.Json.Serialization;
 
 namespace DSoft.AzureDevOps.Services.Client.Models
 {
-	public class Package
+    /// <summary>
+    /// Class Package.
+    /// </summary>
+    public class Package
 	{
-		[JsonPropertyName("id")]
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
+        [JsonPropertyName("id")]
 		public string Id { get; set; }
 
-		[JsonPropertyName("name")]
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
+        [JsonPropertyName("name")]
 		public string Name { get; set; }
 
-		[JsonPropertyName("url")]
+        /// <summary>
+        /// Gets or sets the URL.
+        /// </summary>
+        /// <value>The URL.</value>
+        [JsonPropertyName("url")]
 		public string Url { get; set; }
 
-		[JsonPropertyName("protocolType")]
+        /// <summary>
+        /// Gets or sets the type of the protocol.
+        /// </summary>
+        /// <value>The type of the protocol.</value>
+        [JsonPropertyName("protocolType")]
 		public string ProtocolType { get; set; }
 
-		[JsonPropertyName("versions")]
+        /// <summary>
+        /// Gets or sets the versions.
+        /// </summary>
+        /// <value>The versions.</value>
+        [JsonPropertyName("versions")]
 		public List<PackageVersion> Versions { get; set; }
 	}
 
-	public class PackageVersion
+    /// <summary>
+    /// Class PackageVersion.
+    /// </summary>
+    public class PackageVersion
 	{
-		[JsonPropertyName("id")]
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
+        [JsonPropertyName("id")]
 		public string Id { get; set; }
 
-		[JsonPropertyName("version")]
+        /// <summary>
+        /// Gets or sets the version.
+        /// </summary>
+        /// <value>The version.</value>
+        [JsonPropertyName("version")]
 		public string Version { get; set; }
 	}
 }

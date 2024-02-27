@@ -5,12 +5,23 @@ using System.Text.Json.Serialization;
 
 namespace DSoft.AzureDevOps.Services.Client.Models
 {
-	public class PackagesResponse
+    /// <summary>
+    /// Class PackagesResponse.
+    /// </summary>
+    public class PackagesResponse
 	{
-		[JsonPropertyName("count")]
+        /// <summary>
+        /// Gets or sets the count.
+        /// </summary>
+        /// <value>The count.</value>
+        [JsonPropertyName("count")]
 		public int Count { get; set; }
 
-		[JsonPropertyName("value")]
+        /// <summary>
+        /// Gets or sets the packages.
+        /// </summary>
+        /// <value>The packages.</value>
+        [JsonPropertyName("value")]
 		public List<Package> Packages { get; set; }
 
 	}
