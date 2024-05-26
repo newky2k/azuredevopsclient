@@ -43,7 +43,7 @@ steps:
   displayName: Copy nupkg files to staging
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**/DSoft.*.nupkg'
+    Contents: '**/LoDaTek.*.nupkg'
     TargetFolder: '$(build.artifactstagingdirectory)'
     flattenFolders: true
 

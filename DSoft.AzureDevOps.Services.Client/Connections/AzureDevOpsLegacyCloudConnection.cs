@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Connections
 {
     /// <summary>
-    /// Azure DevOps Cloud Services connection for organisations with VisualStudio.com urls
-    /// Implements the <see cref="DSoft.AzureDevOps.Services.Client.DevOpsConnectionBase" />
+    /// Azure DevOps Cloud Services connection for organisations with visualstudio.com urls
+    /// Implements the <see cref="DevOpsConnectionBase" />
     /// </summary>
-    /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsConnectionBase" />
+    /// <seealso cref="DevOpsConnectionBase" />
     public sealed class AzureDevOpsLegacyCloudConnection : DevOpsConnectionBase
     {
         /// <summary>

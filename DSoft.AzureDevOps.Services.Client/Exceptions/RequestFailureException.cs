@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DSoft.AzureDevOps.Services.Client.Exceptions
+namespace LoDaTek.AzureDevOps.Services.Client.Exceptions
 {
     /// <summary>
     /// Class RequestFailureException.

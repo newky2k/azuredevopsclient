@@ -2,17 +2,18 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using DSoft.AzureDevOps.Services.Client.Exceptions;
+using LoDaTek.AzureDevOps.Services.Client.Connections;
+using LoDaTek.AzureDevOps.Services.Client.Exceptions;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Bases
 {
     /// <summary>
     /// DevOps Connection Base.
     /// Implements the <see cref="IDisposable" />
-    /// Implements the <see cref="DSoft.AzureDevOps.Services.Client.IDevOpsConnection" />
+    /// Implements the <see cref="IDevOpsConnection" />
     /// </summary>
     /// <seealso cref="IDisposable" />
-    /// <seealso cref="DSoft.AzureDevOps.Services.Client.IDevOpsConnection" />
+    /// <seealso cref="IDevOpsConnection" />
     [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class DevOpsConnectionBase : IDisposable, IDevOpsConnection
@@ -91,7 +92,7 @@ namespace DSoft.AzureDevOps.Services.Client
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>T.</returns>
-        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.ConnectionFailureException"></exception>
+        /// <exception cref="ConnectionFailureException"></exception>
         public T GetClient<T>() where T : DevOpsHttpClientBase
         {
             var typ = typeof(T);
@@ -113,7 +114,7 @@ namespace DSoft.AzureDevOps.Services.Client
         /// <typeparam name="T"></typeparam>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A Task&lt;T&gt; representing the asynchronous operation.</returns>
-        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.ConnectionFailureException"></exception>
+        /// <exception cref="ConnectionFailureException"></exception>
         public async Task<T> GetClientAsync<T>(CancellationToken cancellationToken = default) where T : DevOpsHttpClientBase
         {
             var typ = typeof(T);

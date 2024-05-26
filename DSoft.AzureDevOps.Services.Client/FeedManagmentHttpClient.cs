@@ -5,16 +5,18 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using DSoft.AzureDevOps.Services.Client.Exceptions;
-using DSoft.AzureDevOps.Services.Client.Models;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
+using LoDaTek.AzureDevOps.Services.Client.Exceptions;
+using LoDaTek.AzureDevOps.Services.Client.Models;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client
 {
     /// <summary>
     /// HttpClient for feed management
-    /// Implements the <see cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    /// Implements the <see cref="Bases.DevOpsHttpClientBase" />
     /// </summary>
-    /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    /// <seealso cref="Bases.DevOpsHttpClientBase" />
     public sealed class FeedManagmentHttpClient : DevOpsHttpClientBase
     {
         #region Properties
@@ -46,7 +48,7 @@ namespace DSoft.AzureDevOps.Services.Client
         /// Get feeds as an asynchronous operation.
         /// </summary>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
-        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to find feeds</exception>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to find feeds</exception>
         public async Task<List<Feed>> GetFeedsAsync()
         {
             using (var client = Client)
@@ -79,7 +81,7 @@ namespace DSoft.AzureDevOps.Services.Client
         /// </summary>
         /// <param name="feedId">The feed identifier.</param>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
-        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
         public async Task<List<Package>> GetPackagesAsync(Guid feedId)
         {
             using (var client = Client)

@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0; net6.0;</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0; net6.0; net8.0;</TargetFrameworks>
 		<Authors>LoDaTek</Authors>
 		<Summary>Client access library for the Azure DevOps Rest API</Summary>
-		<PackageTags>Azure</PackageTags>
-		<Description>Client access library for the Azure DevOps Rest API</Description>
+		<PackageTags>Azure, Azure DevOps</PackageTags>
+		<Description>Client access library for the Azure DevOps Rest API, for the bits missing from the official library such as feeds and packages</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
+		<Title>LoDaTek Azure DevOps Services Client</Title>
 	</PropertyGroup>
 
 	<ItemGroup>

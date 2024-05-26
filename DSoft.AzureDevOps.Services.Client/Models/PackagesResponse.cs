@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace DSoft.AzureDevOps.Services.Client.Models
+namespace LoDaTek.AzureDevOps.Services.Client.Models
 {
     /// <summary>
-    /// Class PackagesResponse.
+    /// Packages Response model
     /// </summary>
     public class PackagesResponse
 	{

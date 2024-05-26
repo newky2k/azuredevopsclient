@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 
-namespace DSoft.AzureDevOps.Services.Client.Models
+namespace LoDaTek.AzureDevOps.Services.Client.Models
 {
 
     /// <summary>
-    /// Class Project.
+    /// Project model
     /// </summary>
     public class Project
     {

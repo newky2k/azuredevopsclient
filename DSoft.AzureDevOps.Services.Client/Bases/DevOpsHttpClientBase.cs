@@ -6,8 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Bases
 {
     /// <summary>
     /// Class DevOpsHttpClientBase.
@@ -35,7 +36,7 @@ namespace DSoft.AzureDevOps.Services.Client
         /// Gets the test URL.
         /// </summary>
         /// <value>The test URL.</value>
-        internal abstract string TestUrl {get;}
+        internal abstract string TestUrl { get; }
 
         /// <summary>
         /// Gets the connection.
@@ -54,21 +55,6 @@ namespace DSoft.AzureDevOps.Services.Client
                 var client = BuildAuthenticationClient(ApiUrl);
 
                 return client;
-            }
-        }
-
-        /// <summary>
-        /// Gets the web client.
-        /// </summary>
-        /// <value>The web client.</value>
-        protected WebClient WebClient
-        {
-            get
-            {
-                return new WebClient()
-                {
-                    Credentials = new NetworkCredential("username", _connection.PersonalAccessToken),
-                };
             }
         }
 
@@ -159,7 +145,7 @@ namespace DSoft.AzureDevOps.Services.Client
                 }
 
                 return true;
- 
+
             }
             catch
             {
@@ -190,17 +176,17 @@ namespace DSoft.AzureDevOps.Services.Client
             var client = BuildAuthenticationClient();
 
             client.BaseAddress = new Uri(url);
-           
+
             return client;
         }
 
         /// <summary>
         /// Disposes this instance.
         /// </summary>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException"></exception>
         public void Dispose()
         {
-            
+
         }
 
         #endregion

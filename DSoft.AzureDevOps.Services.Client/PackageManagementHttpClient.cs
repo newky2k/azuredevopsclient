@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using DSoft.AzureDevOps.Services.Client.Exceptions;
-using DSoft.AzureDevOps.Services.Client.Models;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
+using LoDaTek.AzureDevOps.Services.Client.Connections;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
+using LoDaTek.AzureDevOps.Services.Client.Exceptions;
+using LoDaTek.AzureDevOps.Services.Client.Models;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client
 {
     /// <summary>
     /// HttpClient for Package Management
-    /// Implements the <see cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    /// Implements the <see cref="Bases.DevOpsHttpClientBase" />
     /// </summary>
-    /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsHttpClientBase" />
+    /// <seealso cref="Bases.DevOpsHttpClientBase" />
     public class PackageManagementHttpClient : DevOpsHttpClientBase
 	{
         #region Abstract
@@ -92,13 +95,13 @@ namespace DSoft.AzureDevOps.Services.Client
         /// <param name="packageVersion">The package version.</param>
         /// <param name="outPutFileName">Name of the out put file.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        /// <exception cref="DSoft.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
         public async Task DownloadNugetPackageAsync(string baseUrl, string packageName, string packageVersion, string outPutFileName)
         {
             var tries = 0;
             var maxTries = 10;
 
-            using (var wclient = WebClient)
+            using (var wclient = Client)
             {
                 var packageUrl  = $"{baseUrl}/{packageName}/{packageVersion}/{packageName}.{packageVersion}.nupkg";
 
@@ -106,8 +109,16 @@ namespace DSoft.AzureDevOps.Services.Client
                 {
                     try
                     {
-                        await wclient.DownloadFileTaskAsync(new Uri(packageUrl, UriKind.Absolute), outPutFileName);
+                        var response = await wclient.GetAsync(new Uri(packageUrl, UriKind.Absolute));
 
+                        response.EnsureSuccessStatusCode();
+
+                        var data = await response.Content.ReadAsByteArrayAsync();
+#if NETSTANDARD2_0
+                        File.WriteAllBytes(outPutFileName, data);
+#else
+                        await File.WriteAllBytesAsync(outPutFileName, data);
+#endif
                         return;
                     }
                     catch
@@ -127,7 +138,7 @@ namespace DSoft.AzureDevOps.Services.Client
         }
 
 
-        #endregion
+#endregion
 
         #region Private Methods
         /// <summary>

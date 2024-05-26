@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization; 
 using System.Collections.Generic; 
 
-namespace DSoft.AzureDevOps.Services.Client.Models
+namespace LoDaTek.AzureDevOps.Services.Client.Models
 {
 
     /// <summary>
-    /// Class Feed.
+    /// Feed Model
     /// </summary>
     public class Feed
     {

@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization; 
 
-namespace DSoft.AzureDevOps.Services.Client.Models{
+namespace LoDaTek.AzureDevOps.Services.Client.Models{
 
     /// <summary>
-    /// Class Links.
+    /// Link model
     /// </summary>
     public class Links
     {

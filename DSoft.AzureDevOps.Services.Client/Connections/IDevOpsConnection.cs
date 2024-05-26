@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Connections
 {
     /// <summary>
     /// DevOps Connection Interface

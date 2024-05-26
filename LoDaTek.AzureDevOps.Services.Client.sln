@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSoft.AzureDevOps.Services.Client", "DSoft.AzureDevOps.Services.Client\DSoft.AzureDevOps.Services.Client.csproj", "{427F8BB3-6FC2-4FD5-BC95-618F1DB7405A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoDaTek.AzureDevOps.Services.Client", "DSoft.AzureDevOps.Services.Client\LoDaTek.AzureDevOps.Services.Client.csproj", "{427F8BB3-6FC2-4FD5-BC95-618F1DB7405A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{74A9BCBC-673F-4EDD-AC0A-994275F59F02}"
 EndProject

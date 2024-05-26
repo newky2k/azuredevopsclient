@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Connections
 {
     /// <summary>
     /// Azure DevOps Cloud Services connection
     /// </summary>
-    /// <seealso cref="DSoft.AzureDevOps.Services.Client.DevOpsConnectionBase" />
+    /// <seealso cref="DevOpsConnectionBase" />
     public sealed class AzureDevOpsCloudConnection : DevOpsConnectionBase
     {
         #region Properties
