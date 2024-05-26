@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DSoft.AzureDevOps.Services.Client
+namespace LoDaTek.AzureDevOps.Services.Client.Enums
 {
+    /// <summary>
+    /// Api Types
+    /// </summary>
     internal enum ApiType
     {
         Common,

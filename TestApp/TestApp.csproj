@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DSoft.AzureDevOps.Services.Client\DSoft.AzureDevOps.Services.Client.csproj" />
+    <ProjectReference Include="..\LoDaTek.AzureDevOps.Services.Client\LoDaTek.AzureDevOps.Services.Client.csproj" />
   </ItemGroup>
 
 </Project>

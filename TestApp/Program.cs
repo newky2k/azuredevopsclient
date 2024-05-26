@@ -2,7 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DSoft.AzureDevOps.Services.Client;
+using LoDaTek.AzureDevOps.Services.Client;
+using LoDaTek.AzureDevOps.Services.Client.Connections;
 
 namespace TestApp
 {
@@ -10,16 +11,9 @@ namespace TestApp
     {
         static async Task Main(string[] args)
         {
-            var pat = "yotqwxqbu55j2my5f7w55alnhinnn5kkdu3u37emwti6bcvmyywa";
-            var locPat = " ";
-            
+            var pat = "";            
             var orgName = "humbatt";
             
-            var locOrgName = "DefaultCollection";
-
-            var instanceURl = "https://desktop-csvvhb7";
-
-
             using (var cloudConnection = new AzureDevOpsCloudConnection(orgName, pat))
             {
                 var feedClient = cloudConnection.GetClient<FeedManagmentHttpClient>();
