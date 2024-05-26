@@ -10,7 +10,7 @@ namespace TestApp
     {
         static async Task Main(string[] args)
         {
-            var pat = "yotqwxqbu55j2my5f7w55alnhinnn5kkdu3u37emwti6bcvmyywa";
+            var pat = "";
             var locPat = " ";
             
             var orgName = "humbatt";
