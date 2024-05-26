@@ -1,22 +1,46 @@
-# 
+# LoDaTek Azure DevOps Client
 
 # Introduction 
-Client access library for the Azure DevOps Rest API, for the bits missing from the official library such as feeds and packages
+Client access library for the Azure DevOps Rest API, for the bits missing from the official library such as feeds and packages.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Works with:
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+- Azure DevOps Cloud
+    - Use `AzureDevOpsCloudConnection`
+- Azure DevOps Cloud (Legacy visualstudio.com URLs)
+    - Use `AzureDevOpsLegacyCloudConnection`
+- Azure DevOps Service (On-Premise)
+    - Use `AzureDevOpsServerConnection`
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Example
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+    using LoDaTek.AzureDevOps.Services.Client;
+    using LoDaTek.AzureDevOps.Services.Client.Connections;
+
+    // create conection to server
+    using (var cloudConnection = new AzureDevOpsCloudConnection(orgName, pat))
+    {
+        // get the feed client
+        var feedClient = cloudConnection.GetClient<FeedManagmentHttpClient>();
+
+        var feeds = await feedClient.GetFeedsAsync();
+
+        var firstFeed = feeds.First();
+
+        var packages = await feedClient.GetPackagesAsync(firstFeed.Id);
+
+        var firsPack = packages.First();
+
+        var firstVersion = firsPack.Versions.First();
+
+        var output = Path.Combine("C:\\", $"{firsPack.Name}.{firstVersion.Version}.nupkg");
+
+        // get the package management client
+        var packageClient = cloudConnection.GetClient<PackageManagementHttpClient>();
+
+        var baseUrl = await packageClient.GetNugetBasePathAsync(firstFeed.Name);
+
+        await packageClient.DownloadNugetPackageAsync(baseUrl, firsPack.Name, firstVersion.Version, output);
+
+        Console.WriteLine($"Cloud Feeds: {feedCount}");
+    }
