@@ -19,6 +19,8 @@ variables:
   value: 'Any CPU'
 - name: buildConfiguration
   value: 'Release'
+- name: netVersion
+  value: '9.x'
 
 name: 1.0.$(date:yyMM).$(date:dd)$(rev:r)
 steps:
@@ -26,18 +28,22 @@ steps:
 - task: NuGetToolInstaller@1
   displayName: Install Latest Nuget
 
-- task: NuGetCommand@2
-  displayName: Nuget Restore
+- task: UseDotNet@2
+  displayName: 'Install .NET sdk'
   inputs:
-    restoreSolution: '$(solution)'
+    packageType: 'sdk'
+    version: $(netVersion)
 
-- task: VSBuild@1
-  displayName: Build Solution 
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:Version=$(Build.BuildNumber) /p:AssemblyVersion=$(Build.BuildNumber) /p:FileVersion=$(Build.BuildNumber)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'restore'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    projects: '$(solution)'
+    arguments: '--configuration=$(buildConfiguration) /p:Platform="$(buildPlatform)" /p:Version=$(Build.BuildNumber) /p:AssemblyVersion=$(Build.BuildNumber) /p:FileVersion=$(Build.BuildNumber) '
 
 - task: CopyFiles@2
   displayName: Copy nupkg files to staging
