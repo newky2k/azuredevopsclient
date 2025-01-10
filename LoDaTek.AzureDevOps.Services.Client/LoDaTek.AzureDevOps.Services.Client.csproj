@@ -2,9 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0;</TargetFrameworks>
-		<Authors>LoDaTek</Authors>
 		<Summary>Client access library for the Azure DevOps Rest API</Summary>
-		<PackageTags>Azure, Azure DevOps</PackageTags>
 		<Description>Client access library for the Azure DevOps Rest API, for the bits missing from the official library such as feeds and packages</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
@@ -22,5 +20,5 @@
 		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
 		<PackageReference Include="System.Text.Json" Version="5.0.2" />
 	</ItemGroup>
-
+	
 </Project>
