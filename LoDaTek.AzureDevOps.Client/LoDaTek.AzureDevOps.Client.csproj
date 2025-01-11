@@ -22,6 +22,9 @@
 		<PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="19.225.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.225.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="19.225.1" />
+		<PackageReference Include="Jsonize" Version="3.2.0" />
+		<PackageReference Include="Jsonize.Parser" Version="3.2.0" />
+		<PackageReference Include="Jsonize.Serializer" Version="3.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
