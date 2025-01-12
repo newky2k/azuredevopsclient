@@ -15,6 +15,9 @@ using System.Web;
 
 namespace LoDaTek.AzureDevOps.Client.Extensions
 {
+    /// <summary>
+    /// WorkItem Extensions
+    /// </summary>
     public static class WorkItemExtensions
     {
         internal static string[] requiredFields = new string[] { "System.Id", "System.Title", "System.WorkItemType", "System.AreaPath", "System.State", "System.Reason", "System.AssignedTo"
@@ -22,6 +25,13 @@ namespace LoDaTek.AzureDevOps.Client.Extensions
 
         internal static string[] excludeFields = new string[] { "System.History" };
 
+        /// <summary>
+        /// Converts to local Agile Work Item
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="workItemFields">The work item fields.</param>
+        /// <returns></returns>
         public static async Task<AgileWorkItem> ToLocalAsync(this WorkItem target, Dictionary<string, string> fields, IEnumerable<WorkItemField> workItemFields)
         {
             var projectUrl = target.Url.Substring(0, target.Url.IndexOf("/_apis/wit"));
@@ -193,6 +203,12 @@ namespace LoDaTek.AzureDevOps.Client.Extensions
             return newItem;
         }
 
+        /// <summary>
+        /// Converts to local.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="agileItem">The agile item.</param>
+        /// <returns></returns>
         public static async Task<AgileItemComment> ToLocal(this Comment target, AgileWorkItem agileItem)
         {
             var comment = new AgileItemComment()
@@ -267,6 +283,13 @@ namespace LoDaTek.AzureDevOps.Client.Extensions
             return comment;
         }
 
+        /// <summary>
+        /// Converts to localasync.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="workItemFields">The work item fields.</param>
+        /// <returns></returns>
         public static async Task<List<AgileWorkItem>> ToLocalAsync(this IEnumerable<WorkItem> items, Dictionary<string, string> fields, IEnumerable<WorkItemField> workItemFields)
         {
             var results = new List<AgileWorkItem>();
@@ -277,6 +300,12 @@ namespace LoDaTek.AzureDevOps.Client.Extensions
             return results;
         }
 
+        /// <summary>
+        /// Converts to localasync.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="agileItem">The agile item.</param>
+        /// <returns></returns>
         public static async Task<List<AgileItemComment>> ToLocalAsync(this IEnumerable<Comment> items, AgileWorkItem agileItem)
         {
             var results = new List<AgileItemComment>();
@@ -290,6 +319,11 @@ namespace LoDaTek.AzureDevOps.Client.Extensions
 
         }
 
+        /// <summary>
+        /// Finds the images.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="node">The node.</param>
         private static void FindImages(List<string> items, JsonizeNode node)
         {
             if (node.Tag == "img")

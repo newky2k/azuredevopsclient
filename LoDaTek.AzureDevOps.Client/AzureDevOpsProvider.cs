@@ -24,9 +24,16 @@ using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using LoDaTek.AzureDevOps.Client.Builders;
 using LoDaTek.AzureDevOps.Client.Extensions;
+using Microsoft.Azure.Pipelines.WebApi;
+using System.Collections.Generic;
+using System;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace LoDaTek.AzureDevOps.Client
 {
+    /// <summary>
+    /// Azure DevOps Provider
+    /// </summary>
     public class AzureDevOpsProvider
     {
         #region Fields
@@ -281,6 +288,186 @@ namespace LoDaTek.AzureDevOps.Client
 
         #endregion
 
+        #region Projects
+
+        /// <summary>
+        /// Finds the projects asynchronously
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Projects - Read</exception>
+        public async Task<List<TeamProjectReference>> FindProjectsAsync()
+        {
+            try
+            {
+                using (var projClient = await Connection.GetClientAsync<ProjectHttpClient>())
+                {
+                    var projects = await projClient.GetProjects();
+
+                    return projects.ToList();
+                }
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Projects", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Projects", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+        }
+
+        #endregion
+
+        #region Git Repos
+
+        /// <summary>
+        /// Finds the git repostitories asynchronous.
+        /// </summary>
+        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repositories - Read</exception>
+        public async Task<List<GitRepository>> FindGitRepostitoriesAsync(Guid projectRemoteId)
+        {
+            try
+            {
+                var repos = await GitClient.GetRepositoriesAsync(projectRemoteId.ToString());
+
+                return repos;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// Finds the git repostitories asynchronous.
+        /// </summary>
+        /// <param name="projectRemoteIds">The project remote ids.</param>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repositories - Read</exception>
+        public async Task<Dictionary<Guid, List<GitRepository>>> FindGitRepostitoriesAsync(IEnumerable<Guid> projectRemoteIds)
+        {
+            try
+            {
+
+                Dictionary<Guid, List <GitRepository >> result = [];
+
+                foreach (var projectRemoteId in projectRemoteIds)
+                {
+                    var repos = await FindGitRepostitoriesAsync(projectRemoteId);
+
+                    result[projectRemoteId] = repos;
+                }
+
+                return result;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Finds the git tags asynchronous.
+        /// </summary>
+        /// <param name="repoRemoteId">The repo remote identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repository Branches - Read</exception>
+        public async Task<List<GitRef>> FindGitTagsAsync(Guid repoRemoteId)
+        {
+            try
+            {
+                var tags = await GitClient.GetRefsAsync(repoRemoteId, filter: "tags", null, null, null, null, true, null, null);
+
+                return tags;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+            }
+            catch (VssServiceResponseException ex)
+            {
+                if (ex.Message.Contains("Cannot find any branches"))
+                    return new List<GitRef>();
+
+                throw;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Finds the git branches asynchronous.
+        /// </summary>
+        /// <param name="repoRemoteId">The repo remote identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repository Branches - Read</exception>
+        public async Task<List<GitBranchStats>> FindGitBranchesAsync(Guid repoRemoteId)
+        {
+            try
+            {
+                var branches = await GitClient.GetBranchesAsync(repoRemoteId);
+
+                return branches;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+            }
+            catch (VssServiceResponseException ex)
+            {
+                if (ex.Message.Contains("Cannot find any branches"))
+                    return new List<GitBranchStats>();
+
+                throw;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        #endregion
 
         #region Work Item 
 
@@ -483,7 +670,6 @@ namespace LoDaTek.AzureDevOps.Client
             }
         }
         #endregion
-
 
         #region Wikis
 
@@ -838,16 +1024,24 @@ namespace LoDaTek.AzureDevOps.Client
             var tries = 0;
             var maxTries = 10;
 
-            using (var wc = new WebClient()
-            {
-                Credentials = new NetworkCredential("username", _organisation.PAT),
-            })
+
+            var credentials = new NetworkCredential("username", _organisation.PAT);
+            var handler = new HttpClientHandler { Credentials = credentials, PreAuthenticate = true };
+
+            using (var client = new HttpClient(handler))
             {
                 while (true)
                 {
                     try
                     {
-                        await wc.DownloadFileTaskAsync(new Uri(packageUrl), outPutFileName);
+
+                        using (var s = await client.GetStreamAsync(new Uri(packageUrl)))
+                        {
+                            using (var fs = new FileStream(outPutFileName, FileMode.CreateNew))
+                            {
+                                await s.CopyToAsync(fs);
+                            }
+                        }
 
                         break;
                     }
