@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using LoDaTek.AzureDevOps.Services.Client.Bases;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
 
 namespace LoDaTek.AzureDevOps.Services.Client.Connections
 {
@@ -12,6 +13,13 @@ namespace LoDaTek.AzureDevOps.Services.Client.Connections
     /// <seealso cref="DevOpsConnectionBase" />
     public sealed class AzureDevOpsLegacyCloudConnection : DevOpsConnectionBase
     {
+
+        /// <summary>
+        /// Gets the type of the server.
+        /// </summary>
+        /// <value>The type of the organisation.</value>
+        public override ServerType ServerType => ServerType.AzureDevOps;
+
         /// <summary>
         /// Gets the base URL.
         /// </summary>
@@ -22,19 +30,19 @@ namespace LoDaTek.AzureDevOps.Services.Client.Connections
         /// Gets the common URL.
         /// </summary>
         /// <value>The common URL.</value>
-        internal override string CommonUrl => BaseUrl;
+        public override string CommonUrl => BaseUrl;
 
         /// <summary>
         /// Gets the feeds API URL.
         /// </summary>
         /// <value>The feeds API URL.</value>
-        internal override string FeedsApiUrl => $"https://{OrganisationName}.feeds.visualstudio.com/_apis/";
+        public override string FeedsApiUrl => $"https://{OrganisationName}.feeds.visualstudio.com/_apis/";
 
         /// <summary>
         /// Gets the nuget packages API URL.
         /// </summary>
         /// <value>The nuget packages API URL.</value>
-        internal override string NugetPackagesApiUrl => $"https://{OrganisationName}.pkgs.visualstudio.com/";
+        public override string NugetPackagesApiUrl => $"https://{OrganisationName}.pkgs.visualstudio.com/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureDevOpsLegacyCloudConnection"/> class.

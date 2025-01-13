@@ -28,6 +28,7 @@ using Microsoft.Azure.Pipelines.WebApi;
 using System.Collections.Generic;
 using System;
 using Microsoft.TeamFoundation.Core.WebApi;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
 
 namespace LoDaTek.AzureDevOps.Client
 {
@@ -37,8 +38,8 @@ namespace LoDaTek.AzureDevOps.Client
     public class AzureDevOpsProvider
     {
         #region Fields
-        private DevOpsOrganisation _organisation;
-        private string credentials => Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", _organisation.PAT)));
+        private DevOpsConnectionBase _devopsConnection;
+        private string credentials => Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", _devopsConnection.PersonalAccessToken)));
         private VssConnection _connection;
         private GitHttpClient _gitClient;
         private TfvcHttpClient _tfvcClient;
@@ -64,41 +65,20 @@ namespace LoDaTek.AzureDevOps.Client
             get
             {
                 if (_connection == null)
-                    _connection = new VssConnection(new Uri(_organisation.Url), new VssBasicCredential(string.Empty, _organisation.PAT));
+                    _connection = new VssConnection(new Uri(_devopsConnection.CommonUrl), new VssBasicCredential(string.Empty, _devopsConnection.PersonalAccessToken));
 
                 return _connection;
             }
 
         }
 
-        private IDevOpsConnection RestApiConnection
-        {
-            get
-            {
-                if (_restApiConnection == null)
-                {
-                    var components = _organisation.GetUrlComponents();
-
-
-                    switch (_organisation.OrganisationType)
-                    {
-                        case ServerType.AzureDevOps:
-                            {
-                                _restApiConnection = new AzureDevOpsCloudConnection(components["name"], _organisation.PAT);
-                            }
-                            break;
-                        case ServerType.DevOpsServer:
-                            {
-                                _restApiConnection = new AzureDevOpsServerConnection(components["url"], components["name"], _organisation.PAT);
-                            }
-                            break;
-                    }
-                }
-
-
-                return _restApiConnection;
-            }
-        }
+        /// <summary>
+        /// Gets the rest API connection.
+        /// </summary>
+        /// <value>
+        /// The rest API connection.
+        /// </value>
+        private IDevOpsConnection RestApiConnection => _devopsConnection;
 
         /// <summary>
         /// Gets the git client.
@@ -256,7 +236,6 @@ namespace LoDaTek.AzureDevOps.Client
             }
         }
 
-
         /// <summary>
         /// Gets the gallery net client.
         /// </summary>
@@ -273,17 +252,18 @@ namespace LoDaTek.AzureDevOps.Client
                 return client;
             }
         }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AzureDevOpsProvider"/> class.
+        /// Initializes a new instance of the <see cref="AzureDevOpsProvider" /> class.
         /// </summary>
-        /// <param name="organisation">The organisation.</param>
-        public AzureDevOpsProvider(DevOpsOrganisation organisation)
+        /// <param name="connection">The DevOps server connection.</param>
+        public AzureDevOpsProvider(DevOpsConnectionBase connection)
         {
-            _organisation = organisation;
+            _devopsConnection = connection;
         }
 
         #endregion
@@ -308,11 +288,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Projects", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Projects", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
             }
             catch (Exception)
             {
@@ -344,11 +324,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
             }
             catch (Exception)
             {
@@ -382,11 +362,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repositories", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
             }
             catch (Exception)
             {
@@ -410,11 +390,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repository Branches", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repository Branches", "Read", e);
             }
             catch (VssServiceResponseException ex)
             {
@@ -446,11 +426,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repository Branches", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Git Repository Branches", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repository Branches", "Read", e);
             }
             catch (VssServiceResponseException ex)
             {
@@ -487,11 +467,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Item Types", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Item Types", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Item Types", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Item Types", "Read", e);
             }
             catch (Exception)
             {
@@ -517,11 +497,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Item Fields", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Item Fields", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Item Fields", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Item Fields", "Read", e);
             }
             catch (Exception)
             {
@@ -624,11 +604,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Items", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Items", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Items", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Items", "Read", e);
             }
             catch (Exception)
             {
@@ -657,11 +637,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Items", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Items", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Work Items", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Work Items", "Read", e);
             }
             catch (Exception)
             {
@@ -691,11 +671,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Wikis", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Wikis", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Wikis", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Wikis", "Read", e);
             }
             catch (Exception)
             {
@@ -724,11 +704,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Wikis", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Wikis", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Wikis", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Wikis", "Read", e);
             }
             catch (Exception)
             {
@@ -757,11 +737,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception)
             {
@@ -787,11 +767,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception)
             {
@@ -846,11 +826,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Pipelines", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
             }
             catch (Exception)
             {
@@ -933,11 +913,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Permissions", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Permissions", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Permissions", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Permissions", "Read", e);
             }
             catch (Exception)
             {
@@ -966,11 +946,11 @@ namespace LoDaTek.AzureDevOps.Client
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_organisation, "Arifiact Feeds", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Arifiact Feeds", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_organisation, "Arifiact Feeds", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Arifiact Feeds", "Read", e);
             }
             catch (Exception)
             {
@@ -1025,7 +1005,7 @@ namespace LoDaTek.AzureDevOps.Client
             var maxTries = 10;
 
 
-            var credentials = new NetworkCredential("username", _organisation.PAT);
+            var credentials = new NetworkCredential("username", _devopsConnection.PersonalAccessToken);
             var handler = new HttpClientHandler { Credentials = credentials, PreAuthenticate = true };
 
             using (var client = new HttpClient(handler))

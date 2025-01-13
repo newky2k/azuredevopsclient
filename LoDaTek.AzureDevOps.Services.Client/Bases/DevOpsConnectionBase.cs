@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
 using LoDaTek.AzureDevOps.Services.Client.Exceptions;
 
 namespace LoDaTek.AzureDevOps.Services.Client.Bases
@@ -29,7 +30,7 @@ namespace LoDaTek.AzureDevOps.Services.Client.Bases
         /// Gets the name of the organisation.
         /// </summary>
         /// <value>The name of the organisation.</value>
-        internal string OrganisationName
+        public string OrganisationName
         {
             get { return _organisationName; }
             private set { _organisationName = value; }
@@ -39,7 +40,7 @@ namespace LoDaTek.AzureDevOps.Services.Client.Bases
         /// Gets the personal access token.
         /// </summary>
         /// <value>The personal access token.</value>
-        internal string PersonalAccessToken
+        public string PersonalAccessToken
         {
             get { return _personalAccessToken; }
             private set { _personalAccessToken = value; }
@@ -55,20 +56,25 @@ namespace LoDaTek.AzureDevOps.Services.Client.Bases
         /// Gets the common URL.
         /// </summary>
         /// <value>The common URL.</value>
-        internal abstract string CommonUrl { get; }
+        public abstract string CommonUrl { get; }
 
         /// <summary>
         /// Gets the feeds API URL.
         /// </summary>
         /// <value>The feeds API URL.</value>
-        internal abstract string FeedsApiUrl { get; }
+        public abstract string FeedsApiUrl { get; }
 
         /// <summary>
         /// Gets the nuget packages API URL.
         /// </summary>
         /// <value>The nuget packages API URL.</value>
-        internal abstract string NugetPackagesApiUrl { get; }
+        public abstract string NugetPackagesApiUrl { get; }
 
+        /// <summary>
+        /// Gets the type of the organisation.
+        /// </summary>
+        /// <value>The type of the organisation.</value>
+        public abstract ServerType ServerType { get; }
 
         #endregion
 

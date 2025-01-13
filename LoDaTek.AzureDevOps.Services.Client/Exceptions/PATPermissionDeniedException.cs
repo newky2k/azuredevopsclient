@@ -14,7 +14,7 @@ namespace LoDaTek.AzureDevOps.Services.Client.Exceptions
     {
         private string _area;
         private string _type;
-        private DevOpsOrganisation _organisation;
+        private string _name;
 
         /// <summary>
         /// Gets a message that describes the current exception.
@@ -25,15 +25,15 @@ namespace LoDaTek.AzureDevOps.Services.Client.Exceptions
         /// <summary>
         /// Initializes a new instance of the <see cref="PATPermissionDeniedException"/> class.
         /// </summary>
-        /// <param name="organisation">The organisation.</param>
+        /// <param name="organisationName">The organisation or collection name</param>
         /// <param name="area">The area.</param>
         /// <param name="type">The type.</param>
         /// <param name="innerException">The inner exception.</param>
-        public PATPermissionDeniedException(DevOpsOrganisation organisation, string area, string type, Exception innerException) : base("Permission Denied", innerException)
+        public PATPermissionDeniedException(string organisationName, string area, string type, Exception innerException) : base("Permission Denied", innerException)
         {
             _area = area;
             _type = type;
-            _organisation = organisation;
+            _name = organisationName;
         }
     }
 }
