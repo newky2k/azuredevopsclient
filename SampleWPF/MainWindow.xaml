@@ -11,12 +11,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock>Organisation Name</TextBlock>
-            <TextBox />
-            <TextBlock>Server Type</TextBlock>
-            <ComboBox />
-        </StackPanel>
+        <GroupBox Header="Connection">
+            <StackPanel>
+                <TextBlock>Organisation/Collection Name</TextBlock>
+                <TextBox />
+                <TextBlock>Server Type</TextBlock>
+                <ComboBox />
+                <TextBlock>URL</TextBlock>
+                <TextBox />
+                <Button Style="{DynamicResource AccentButtonStyle}">Connect</Button>
+            </StackPanel>
+        </GroupBox>
+
         
     </Grid>
 </Window>
