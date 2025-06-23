@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.TeamFoundation.DistributedTask.WebApi" Version="19.225.1" />
 		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="19.225.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.225.1" />

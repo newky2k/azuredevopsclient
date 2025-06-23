@@ -299,9 +299,43 @@ namespace LoDaTek.AzureDevOps.Client
 
                 throw;
             }
+        }
 
+        /// <summary>
+        /// Find a single project
+        /// </summary>
+        /// <param name="projectNameOrId">The project name or identifier.</param>
+        /// <returns>A Task&lt;TeamProjectReference&gt; representing the asynchronous operation.</returns>
+        /// <exception cref="PATPermissionDeniedException">Projects - Read</exception>
+        public async Task<TeamProjectReference> FindProjectAsync(string projectNameOrId)
+        {
+            try
+            {            
 
+                using (var projClient = await Connection.GetClientAsync<ProjectHttpClient>())
+                {
+                    var project = await projClient.GetProject(projectNameOrId);
 
+                    return project;
+                }
+            }
+            catch (ProjectDoesNotExistWithNameException e)
+            {
+                // if project not found then just return null
+                return null;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #endregion
@@ -1132,6 +1166,41 @@ namespace LoDaTek.AzureDevOps.Client
         public async Task<Stream> GetAttachmentContentAsync(Guid guid, string fileName, bool download)
         {
             return await WorkItemClient.GetAttachmentContentAsync(guid, fileName: fileName, download: download);
+        }
+
+        #endregion
+
+        #region Variable groups
+
+        /// <summary>
+        /// Gets the variable groups for the specified project.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <returns>System.Threading.Tasks.Task&lt;System.Collections.Generic.List&lt;Microsoft.TeamFoundation.DistributedTask.WebApi.VariableGroup&gt;&gt;.</returns>
+        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.VariableGroup>> GetVariableGroupsAsync(TeamProjectReference project)
+        {
+            try
+            {
+                using (var taskClient = await Connection.GetClientAsync<Microsoft.TeamFoundation.DistributedTask.WebApi.TaskAgentHttpClient>())
+                {
+                    var results = await taskClient.GetVariableGroupsAsync(project.Id);
+
+                    return results;
+                }
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         #endregion

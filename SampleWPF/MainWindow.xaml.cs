@@ -21,9 +21,12 @@ namespace SampleWPF
         public MainViewModel ViewModel
         {
             get { return _viewModel; }
-            set { _viewModel = value; }
+            set { _viewModel = value; DataContext = _viewModel; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
