@@ -100,10 +100,11 @@ namespace SampleWPF
 								{
 									var variableGroups = await devOpsProvider.GetVariableGroupsAsync(project);
 
-									if (variableGroups != null)
-									{
+									var pipelines = await devOpsProvider.FindBuildPipelinesAsync(project);
 
-									}
+									var secureFiles = await devOpsProvider.GetSecureFileAsync(project);
+
+									var secureFiles2 = await devOpsProvider.GetSecureFile2Async(project);
 								}
 							}
 

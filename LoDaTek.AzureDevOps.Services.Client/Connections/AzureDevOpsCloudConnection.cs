@@ -45,7 +45,6 @@ namespace LoDaTek.AzureDevOps.Services.Client.Connections
         /// <value>The nuget packages API URL.</value>
         public override string NugetPackagesApiUrl => $"https://pkgs.dev.azure.com/{OrganisationName}/";
 
-
         #endregion
 
         #region Constructors

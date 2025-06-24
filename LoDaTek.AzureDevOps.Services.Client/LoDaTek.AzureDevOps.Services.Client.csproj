@@ -16,6 +16,11 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TeamFoundation.DistributedTask.WebApi" Version="19.225.1" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
+	</ItemGroup>
+	
 	<ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
 		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
 		<PackageReference Include="System.Text.Json" Version="5.0.2" />

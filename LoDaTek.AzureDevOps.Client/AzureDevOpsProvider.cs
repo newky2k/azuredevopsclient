@@ -1,34 +1,35 @@
-﻿using LoDaTek.AzureDevOps.Services.Client;
+﻿using LoDaTek.AzureDevOps.Client.Builders;
+using LoDaTek.AzureDevOps.Client.Extensions;
+using LoDaTek.AzureDevOps.Services.Client;
+using LoDaTek.AzureDevOps.Services.Client.Bases;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
 using LoDaTek.AzureDevOps.Services.Client.Enums;
 using LoDaTek.AzureDevOps.Services.Client.Exceptions;
 using LoDaTek.AzureDevOps.Services.Client.Models;
+using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.DistributedTask.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 using Microsoft.VisualStudio.Services.Gallery.WebApi;
 using Microsoft.VisualStudio.Services.Organization;
 using Microsoft.VisualStudio.Services.Organization.Client;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using Microsoft.VisualStudio.Services.Security;
 using Microsoft.VisualStudio.Services.Security.Client;
 using Microsoft.VisualStudio.Services.WebApi;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
-using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using LoDaTek.AzureDevOps.Client.Builders;
-using LoDaTek.AzureDevOps.Client.Extensions;
-using Microsoft.Azure.Pipelines.WebApi;
-using System.Collections.Generic;
-using System;
-using Microsoft.TeamFoundation.Core.WebApi;
-using LoDaTek.AzureDevOps.Services.Client.Bases;
 
 namespace LoDaTek.AzureDevOps.Client
 {
@@ -48,12 +49,13 @@ namespace LoDaTek.AzureDevOps.Client
         private BuildHttpClient _buildClient;
         private FeedManagmentHttpClient _feedClient;
         private PackageManagementHttpClient _packagesClient;
+        private SecureFilesHttpClient _secureFilesClient;
 
         private ReleaseHttpClient _releaseClient;
         private SecurityHttpClient _securityClient;
         private ExtensionManagementHttpClient _extensionClient;
         private GalleryHttpClient _galleryClient;
-
+        private TaskAgentHttpClient _taskAgentHttpClient;
         IDevOpsConnection _restApiConnection;
 
         #endregion
@@ -252,6 +254,38 @@ namespace LoDaTek.AzureDevOps.Client
                 return client;
             }
         }
+
+        /// <summary>
+        /// Gets the Task Agent http client.
+        /// </summary>
+        /// <value>The extensions client.</value>
+        public TaskAgentHttpClient TaskAgentClient
+        {
+            get
+            {
+                if (_taskAgentHttpClient == null)
+                    _taskAgentHttpClient = Connection.GetClient<TaskAgentHttpClient>();
+
+                return _taskAgentHttpClient;
+            }
+        }
+
+        /// <summary>
+        /// Gets the packages client.
+        /// </summary>
+        /// <value>The packages client.</value>
+        public SecureFilesHttpClient SecureFilesClient
+        {
+            get
+            {
+                if (_secureFilesClient == null)
+                    _secureFilesClient = RestApiConnection.GetClient<SecureFilesHttpClient>();
+
+                return _secureFilesClient;
+            }
+        }
+
+        //SecureFilesHttpClient
 
         #endregion
 
@@ -758,14 +792,14 @@ namespace LoDaTek.AzureDevOps.Client
         /// <summary>
         /// Find build pipelines as an asynchronous operation.
         /// </summary>
-        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <param name="project">The project.</param>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
-        public async Task<List<BuildDefinition>> FindBuildPipelinesAsync(Guid projectRemoteId)
+        public async Task<List<BuildDefinition>> FindBuildPipelinesAsync(TeamProjectReference project)
         {
             try
             {
-                var results = await PipelineClient.GetFullDefinitionsAsync(projectRemoteId);
+                var results = await PipelineClient.GetFullDefinitionsAsync(project.Id);
 
                 return results;
             }
@@ -788,14 +822,14 @@ namespace LoDaTek.AzureDevOps.Client
         /// <summary>
         /// Find released pipelines as an asynchronous operation.
         /// </summary>
-        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <param name="project">The project.</param>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
-        public async Task<List<ReleaseDefinition>> FindReleasedPipelinesAsync(Guid projectRemoteId)
+        public async Task<List<ReleaseDefinition>> FindReleasedPipelinesAsync(TeamProjectReference project)
         {
             try
             {
-                var results = await ReleaseClient.GetReleaseDefinitionsAsync(projectRemoteId);
+                var results = await ReleaseClient.GetReleaseDefinitionsAsync(project.Id);
 
                 return results;
             }
@@ -818,12 +852,12 @@ namespace LoDaTek.AzureDevOps.Client
         /// <summary>
         /// Get pipeline json as an asynchronous operation.
         /// </summary>
-        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <param name="project">The project.</param>
         /// <param name="pipelineRemoteId">The pipeline remote identifier.</param>
         /// <param name="isReleasePipeline">if set to <c>true</c> [is release pipeline].</param>
         /// <returns>A Task&lt;System.String&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
-        public async Task<string> GetPipelineJSONAsync(Guid projectRemoteId, int pipelineRemoteId, bool isReleasePipeline)
+        public async Task<string> GetPipelineJSONAsync(TeamProjectReference project, int pipelineRemoteId, bool isReleasePipeline)
         {
             try
             {
@@ -835,7 +869,7 @@ namespace LoDaTek.AzureDevOps.Client
 
                 if (isReleasePipeline == true)
                 {
-                    var data = await ReleaseClient.GetReleaseDefinitionAsync(projectRemoteId, pipelineRemoteId);
+                    var data = await ReleaseClient.GetReleaseDefinitionAsync(project.Id, pipelineRemoteId);
 
                     if (data == null)
                         return null;
@@ -847,7 +881,7 @@ namespace LoDaTek.AzureDevOps.Client
                 }
                 else
                 {
-                    var data = await PipelineClient.GetDefinitionAsync(projectRemoteId, pipelineRemoteId);
+                    var data = await PipelineClient.GetDefinitionAsync(project.Id, pipelineRemoteId);
 
                     if (data == null)
                         return null;
@@ -1181,20 +1215,17 @@ namespace LoDaTek.AzureDevOps.Client
         {
             try
             {
-                using (var taskClient = await Connection.GetClientAsync<Microsoft.TeamFoundation.DistributedTask.WebApi.TaskAgentHttpClient>())
-                {
-                    var results = await taskClient.GetVariableGroupsAsync(project.Id);
+                var results = await TaskAgentClient.GetVariableGroupsAsync(project.Id);
 
-                    return results;
-                }
+                return results;
             }
             catch (VssUnauthorizedException e)
             {
-                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Variable Groups", "Read", e);
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
-                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Projects", "Read", e);
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Variable Groups", "Read", e);
             }
             catch (Exception)
             {
@@ -1203,6 +1234,65 @@ namespace LoDaTek.AzureDevOps.Client
             }
         }
 
+        #endregion
+
+        #region Variable groups
+
+        /// <summary>
+        /// Gets the secure files for the specified project.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <returns>System.Threading.Tasks.Task&lt;System.Collections.Generic.List&lt;Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile&gt;&gt;.</returns>
+        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile>> GetSecureFileAsync(TeamProjectReference project)
+        {
+            try
+            {
+                var results = await TaskAgentClient.GetSecureFilesAsync(project.Id);
+
+                return results;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the secure files for the specified project.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <returns>System.Threading.Tasks.Task&lt;System.Collections.Generic.List&lt;Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile&gt;&gt;.</returns>
+        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile>> GetSecureFile2Async(TeamProjectReference project)
+        {
+            try
+            {
+                var results = await SecureFilesClient.GetAllAsync(project);
+
+                return results;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
         #endregion
     }
 }
