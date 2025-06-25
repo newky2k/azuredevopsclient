@@ -320,11 +320,11 @@ namespace LoDaTek.AzureDevOps.Client
         #region Projects
 
         /// <summary>
-        /// Finds the projects asynchronously
+        /// Get the projects
         /// </summary>
         /// <returns></returns>
         /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Projects - Read</exception>
-        public async Task<List<TeamProjectReference>> FindProjectsAsync()
+        public async Task<List<TeamProjectReference>> GetProjectsAsync()
         {
             try
             {
@@ -351,12 +351,12 @@ namespace LoDaTek.AzureDevOps.Client
         }
 
         /// <summary>
-        /// Find a single project
+        /// Get a specific project
         /// </summary>
         /// <param name="projectNameOrId">The project name or identifier.</param>
         /// <returns>A Task&lt;TeamProjectReference&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Projects - Read</exception>
-        public async Task<TeamProjectReference> FindProjectAsync(string projectNameOrId)
+        public async Task<TeamProjectReference> GetProjectAsync(string projectNameOrId)
         {
             try
             {            
@@ -987,18 +987,22 @@ namespace LoDaTek.AzureDevOps.Client
 
         }
 
-
+        /// <summary>
+        /// Runs a pipeline asynchronous.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <param name="pipeline">The pipeline.</param>
+        /// <param name="branch">The branch.</param>
+        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>System.Threading.Tasks.Task.</returns>
         public async Task RunPipelineAsync(TeamProjectReference project, BuildDefinition pipeline, GitBranchStats branch, CancellationToken cancellationToken = default)
         {
             try
             {
-                var refName =$"refs/heads/{branch.Name}";
+                var refName = $"refs/heads/{branch.Name}";
                 RunPipelineParameters pars = new()
                 {
-                    Resources = new RunResourcesParameters()
-                    {
-
-                    },
+                    Resources = new RunResourcesParameters(),
                 };
 
                 pars.Resources.Repositories.Add("self", new RepositoryResourceParameters()

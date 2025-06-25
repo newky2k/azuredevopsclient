@@ -153,7 +153,7 @@ namespace SampleWPF
 							{
 								var devOpsProvider = new AzureDevOpsProvider(cloudConnection);
 
-								var project = await devOpsProvider.FindProjectAsync(ProjectName);
+								var project = await devOpsProvider.GetProjectAsync(ProjectName);
 
 								if (project != null && !project.IsEmpty())
 								{
