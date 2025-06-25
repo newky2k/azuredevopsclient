@@ -94,6 +94,21 @@ namespace SampleWPF.Properties
                 this[nameof(RepoName)] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PipelineName
+        {
+            get
+            {
+                return ((string)(this[nameof(PipelineName)]));
+            }
+            set
+            {
+                this[nameof(PipelineName)] = value;
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using LoDaTek.AzureDevOps.Client;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
 using LoDaTek.AzureDevOps.Services.Client.Enums;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Account;
 using System;
@@ -21,6 +22,7 @@ namespace SampleWPF
         private ServerType _serverType;
         private string _projectName;
         private string _repoName;
+        private string _pipelineName;
 
         public string Name
 		{
@@ -56,6 +58,24 @@ namespace SampleWPF
                  
 			}
 		}
+
+        public string PipelineName
+        {
+            get { return _pipelineName; }
+            set
+            {
+                if (_pipelineName != value)
+                {
+                    _pipelineName = value;
+
+                    NotifyPropertyChanged(nameof(PipelineName));
+
+                    Properties.Settings.Default.PipelineName = value;
+                    Properties.Settings.Default.Save();
+                }
+
+            }
+        }
 
         public string ProjectName
         {
@@ -139,22 +159,25 @@ namespace SampleWPF
 								{
 									var variableGroups = await devOpsProvider.GetVariableGroupsAsync(project);
 
-									var pipelines = await devOpsProvider.FindBuildPipelinesAsync(project);
+									var pipeline = await devOpsProvider.GetBuildPipelineAsync(project, PipelineName);
 
-									var secureFiles = await devOpsProvider.GetSecureFileAsync(project);
-
-									var repo = await devOpsProvider.GetRepositoryAsync(project, RepoName);
-
-									if (repo != null)
+									if (pipeline != null)
 									{
-										var branches = await devOpsProvider.GetBranchesAsync(repo);
+                                        var repo = await devOpsProvider.GetRepositoryAsync(project, RepoName);
 
-										if (branches.Any())
-										{
+                                        if (repo != null)
+                                        {
+                                            var branches = await devOpsProvider.GetBranchesAsync(repo);
 
-										}
-									}
-								
+                                            if (branches.Any())
+                                            {
+                                                var branch = branches.First();
+
+                                                await devOpsProvider.RunPipelineAsync(project, pipeline, branch);
+                                            }
+                                        }
+                                    }
+
 								}
 							}
 
@@ -186,8 +209,9 @@ namespace SampleWPF
 			_pat = Properties.Settings.Default.PAT;
 			_projectName = Properties.Settings.Default.ProjectName;
 			_repoName = Properties.Settings.Default.RepoName;
+            _pipelineName = Properties.Settings.Default.PipelineName;
 
-			var values = Enum.GetValues(typeof(ServerType)).Cast<ServerType>();
+            var values = Enum.GetValues(typeof(ServerType)).Cast<ServerType>();
 
 			var intValue = Properties.Settings.Default.ServerType;
 

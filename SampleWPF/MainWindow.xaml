@@ -27,6 +27,8 @@
                 <TextBox  Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock>Repository Name</TextBlock>
                 <TextBox  Text="{Binding RepoName, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock>Pipeline Name</TextBlock>
+                <TextBox  Text="{Binding PipelineName, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Style="{DynamicResource AccentButtonStyle}" Command="{Binding ConnectCommand}">Connect</Button>
                 <ProgressBar Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}" IsIndeterminate="True"/>
             </StackPanel>

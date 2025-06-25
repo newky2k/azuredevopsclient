@@ -56,6 +56,8 @@ namespace LoDaTek.AzureDevOps.Client
         private ExtensionManagementHttpClient _extensionClient;
         private GalleryHttpClient _galleryClient;
         private TaskAgentHttpClient _taskAgentHttpClient;
+        private PipelinesHttpClient _pipelinesHttpClient;
+
         IDevOpsConnection _restApiConnection;
 
         #endregion
@@ -145,10 +147,10 @@ namespace LoDaTek.AzureDevOps.Client
         }
 
         /// <summary>
-        /// Gets the pipeline client.
+        /// Gets the build pipeline client.
         /// </summary>
         /// <value>The pipeline client.</value>
-        public BuildHttpClient PipelineClient
+        public BuildHttpClient BuildClient
         {
             get
             {
@@ -285,7 +287,20 @@ namespace LoDaTek.AzureDevOps.Client
             }
         }
 
-        //SecureFilesHttpClient
+        /// <summary>
+        /// Gets the pipelines client.
+        /// </summary>
+        /// <value>The pipelines client.</value>
+        public PipelinesHttpClient PipelinesClient
+        {
+            get
+            {
+                if (_pipelinesHttpClient == null)
+                    _pipelinesHttpClient = Connection.GetClient<PipelinesHttpClient>();
+
+                return _pipelinesHttpClient;
+            }
+        }
 
         #endregion
 
@@ -821,16 +836,49 @@ namespace LoDaTek.AzureDevOps.Client
         #region Pipelines
 
         /// <summary>
-        /// Find build pipelines as an asynchronous operation.
+        /// Get the build pipelines with the specified name for thje specified project
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <param name="pipelineName">Name of the pipeline.</param>
+        /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
+        /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
+        public async Task<BuildDefinition> GetBuildPipelineAsync(TeamProjectReference project, string pipelineName)
+        {
+            try
+            {
+                var results = await GetBuildPipelinesAsync(project);
+
+                var first = results.FirstOrDefault(x => x.Name == pipelineName);
+
+                return first;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// Get the build pipelines for the specified project
         /// </summary>
         /// <param name="project">The project.</param>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
-        public async Task<List<BuildDefinition>> FindBuildPipelinesAsync(TeamProjectReference project)
+        public async Task<List<BuildDefinition>> GetBuildPipelinesAsync(TeamProjectReference project)
         {
             try
             {
-                var results = await PipelineClient.GetFullDefinitionsAsync(project.Id);
+                var results = await BuildClient.GetFullDefinitionsAsync(project.Id);
 
                 return results;
             }
@@ -851,12 +899,12 @@ namespace LoDaTek.AzureDevOps.Client
         }
 
         /// <summary>
-        /// Find released pipelines as an asynchronous operation.
+        /// Get the release pipelines for the specified project
         /// </summary>
         /// <param name="project">The project.</param>
         /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
         /// <exception cref="PATPermissionDeniedException">Pipelines - Read</exception>
-        public async Task<List<ReleaseDefinition>> FindReleasedPipelinesAsync(TeamProjectReference project)
+        public async Task<List<ReleaseDefinition>> GetReleasePipelinesAsync(TeamProjectReference project)
         {
             try
             {
@@ -912,7 +960,7 @@ namespace LoDaTek.AzureDevOps.Client
                 }
                 else
                 {
-                    var data = await PipelineClient.GetDefinitionAsync(project.Id, pipelineRemoteId);
+                    var data = await BuildClient.GetDefinitionAsync(project.Id, pipelineRemoteId);
 
                     if (data == null)
                         return null;
@@ -939,6 +987,46 @@ namespace LoDaTek.AzureDevOps.Client
 
         }
 
+
+        public async Task RunPipelineAsync(TeamProjectReference project, BuildDefinition pipeline, GitBranchStats branch, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var refName =$"refs/heads/{branch.Name}";
+                RunPipelineParameters pars = new()
+                {
+                    Resources = new RunResourcesParameters()
+                    {
+
+                    },
+                };
+
+                pars.Resources.Repositories.Add("self", new RepositoryResourceParameters()
+                {
+                    RefName = refName,
+                });
+
+                var result = await PipelinesClient.RunPipelineAsync(pars, project.Id, pipeline.Id, cancellationToken: cancellationToken);
+
+                if (result.State == RunState.InProgress)
+                {
+
+                }
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Pipelines", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         #endregion
 
         #region Security
