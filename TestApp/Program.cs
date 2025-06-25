@@ -16,6 +16,7 @@ namespace TestApp
             
             using (var cloudConnection = new AzureDevOpsCloudConnection(orgName, pat))
             {
+               
                 var feedClient = cloudConnection.GetClient<FeedManagmentHttpClient>();
 
                 var feeds = await feedClient.GetFeedsAsync();

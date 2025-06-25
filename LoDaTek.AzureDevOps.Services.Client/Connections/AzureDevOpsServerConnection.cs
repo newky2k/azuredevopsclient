@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using LoDaTek.AzureDevOps.Services.Client.Bases;
+using LoDaTek.AzureDevOps.Services.Client.Enums;
 
 namespace LoDaTek.AzureDevOps.Services.Client.Connections
 {
@@ -23,6 +24,12 @@ namespace LoDaTek.AzureDevOps.Services.Client.Connections
         #region Properties
 
         /// <summary>
+        /// Gets the type of the server.
+        /// </summary>
+        /// <value>The type of the organisation.</value>
+        public override ServerType ServerType => ServerType.DevOpsServer;
+
+        /// <summary>
         /// Gets the base URL.
         /// </summary>
         /// <value>The base URL.</value>
@@ -32,19 +39,19 @@ namespace LoDaTek.AzureDevOps.Services.Client.Connections
         /// Gets the feeds API URL.
         /// </summary>
         /// <value>The feeds API URL.</value>
-        internal override string FeedsApiUrl => $"{CommonUrl}/_apis/";
+        public override string FeedsApiUrl => $"{CommonUrl}/_apis/";
 
         /// <summary>
         /// Gets the common URL.
         /// </summary>
         /// <value>The common URL.</value>
-        internal override string CommonUrl => $"{BaseUrl}/{OrganisationName}/";
+        public override string CommonUrl => $"{BaseUrl}/{OrganisationName}/";
 
         /// <summary>
         /// Gets the nuget packages API URL.
         /// </summary>
         /// <value>The nuget packages API URL.</value>
-        internal override string NugetPackagesApiUrl => $"{BaseUrl}/{OrganisationName}/";
+        public override string NugetPackagesApiUrl => $"{BaseUrl}/{OrganisationName}/";
 
         #endregion
 
