@@ -21,8 +21,12 @@
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBlock>Server Type</TextBlock>
                 <ComboBox ItemsSource="{Binding ServerTypes}" SelectedItem="{Binding ServerType}" />
-                <TextBlock><Run Language="en-gb" Text="PAT"/></TextBlock>
+                <TextBlock>PAT</TextBlock>
                 <TextBox  Text="{Binding PAT, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock>Project Name</TextBlock>
+                <TextBox  Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock>Repository Name</TextBlock>
+                <TextBox  Text="{Binding RepoName, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Style="{DynamicResource AccentButtonStyle}" Command="{Binding ConnectCommand}">Connect</Button>
                 <ProgressBar Visibility="{Binding IsBusy, Converter={StaticResource booleanToVisibilityConverter}}" IsIndeterminate="True"/>
             </StackPanel>

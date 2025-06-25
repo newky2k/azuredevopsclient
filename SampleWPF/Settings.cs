@@ -64,6 +64,36 @@ namespace SampleWPF.Properties
                 this[nameof(ServerType)] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ProjectName
+        {
+            get
+            {
+                return ((string)(this[nameof(ProjectName)]));
+            }
+            set
+            {
+                this[nameof(ProjectName)] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RepoName
+        {
+            get
+            {
+                return ((string)(this[nameof(RepoName)]));
+            }
+            set
+            {
+                this[nameof(RepoName)] = value;
+            }
+        }
     }
 }
 

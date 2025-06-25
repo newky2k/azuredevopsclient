@@ -377,16 +377,48 @@ namespace LoDaTek.AzureDevOps.Client
         #region Git Repos
 
         /// <summary>
-        /// Finds the git repostitories asynchronous.
+        /// Get the specified git repostitory for the specified project
         /// </summary>
-        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <param name="project">The project remote identifier.</param>
+        /// <param name="name">Name of the repo.</param>
         /// <returns></returns>
         /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repositories - Read</exception>
-        public async Task<List<GitRepository>> FindGitRepostitoriesAsync(Guid projectRemoteId)
+        public async Task<GitRepository> GetRepositoryAsync(TeamProjectReference project, string name)
         {
             try
             {
-                var repos = await GitClient.GetRepositoriesAsync(projectRemoteId.ToString());
+                var repos = await GitClient.GetRepositoriesAsync(project.Id.ToString());
+
+                var first = repos.FirstOrDefault(x => x.Name == name);
+
+                return first;
+            }
+            catch (VssUnauthorizedException e)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "Git Repositories", "Read", e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get the git repostitories for the specified project
+        /// </summary>
+        /// <param name="project">The project remote identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repositories - Read</exception>
+        public async Task<List<GitRepository>> GetRepositoriesAsync(TeamProjectReference project)
+        {
+            try
+            {
+                var repos = await GitClient.GetRepositoriesAsync(project.Id.ToString());
 
                 return repos;
             }
@@ -403,27 +435,26 @@ namespace LoDaTek.AzureDevOps.Client
 
                 throw;
             }
-
         }
 
         /// <summary>
-        /// Finds the git repostitories asynchronous.
+        /// Get the git repostitories for the specified projects
         /// </summary>
-        /// <param name="projectRemoteIds">The project remote ids.</param>
+        /// <param name="projects">The projects.</param>
         /// <returns></returns>
         /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repositories - Read</exception>
-        public async Task<Dictionary<Guid, List<GitRepository>>> FindGitRepostitoriesAsync(IEnumerable<Guid> projectRemoteIds)
+        public async Task<Dictionary<Guid, List<GitRepository>>> GetRepositoriesAsync(IEnumerable<TeamProjectReference> projects)
         {
             try
             {
 
                 Dictionary<Guid, List <GitRepository >> result = [];
 
-                foreach (var projectRemoteId in projectRemoteIds)
+                foreach (var project in projects)
                 {
-                    var repos = await FindGitRepostitoriesAsync(projectRemoteId);
+                    var repos = await GetRepositoriesAsync(project);
 
-                    result[projectRemoteId] = repos;
+                    result[project.Id] = repos;
                 }
 
                 return result;
@@ -445,14 +476,14 @@ namespace LoDaTek.AzureDevOps.Client
         /// <summary>
         /// Finds the git tags asynchronous.
         /// </summary>
-        /// <param name="repoRemoteId">The repo remote identifier.</param>
+        /// <param name="repository">repository.</param>
         /// <returns></returns>
         /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repository Branches - Read</exception>
-        public async Task<List<GitRef>> FindGitTagsAsync(Guid repoRemoteId)
+        public async Task<List<GitRef>> GetGitTagsAsync(GitRepository repository)
         {
             try
             {
-                var tags = await GitClient.GetRefsAsync(repoRemoteId, filter: "tags", null, null, null, null, true, null, null);
+                var tags = await GitClient.GetRefsAsync(repository.Id, filter: "tags", null, null, null, null, true, null, null);
 
                 return tags;
             }
@@ -481,14 +512,14 @@ namespace LoDaTek.AzureDevOps.Client
         /// <summary>
         /// Finds the git branches asynchronous.
         /// </summary>
-        /// <param name="repoRemoteId">The repo remote identifier.</param>
+        /// <param name="repository">The repo remote identifier.</param>
         /// <returns></returns>
         /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.PATPermissionDeniedException">Git Repository Branches - Read</exception>
-        public async Task<List<GitBranchStats>> FindGitBranchesAsync(Guid repoRemoteId)
+        public async Task<List<GitBranchStats>> GetBranchesAsync(GitRepository repository)
         {
             try
             {
-                var branches = await GitClient.GetBranchesAsync(repoRemoteId);
+                var branches = await GitClient.GetBranchesAsync(repository.Id);
 
                 return branches;
             }
@@ -1236,20 +1267,30 @@ namespace LoDaTek.AzureDevOps.Client
 
         #endregion
 
-        #region Variable groups
+        #region Secure Files groups
 
         /// <summary>
         /// Gets the secure files for the specified project.
         /// </summary>
         /// <param name="project">The project.</param>
+        /// <param name="useMicrosoftsImplementation">The use microsofts implementation.</param>
         /// <returns>System.Threading.Tasks.Task&lt;System.Collections.Generic.List&lt;Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile&gt;&gt;.</returns>
-        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile>> GetSecureFileAsync(TeamProjectReference project)
+        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile>> GetSecureFileAsync(TeamProjectReference project, bool useMicrosoftsImplementation = false)
         {
             try
             {
-                var results = await TaskAgentClient.GetSecureFilesAsync(project.Id);
+                if (useMicrosoftsImplementation)
+                {
+                    var results = await TaskAgentClient.GetSecureFilesAsync(project.Id);
 
-                return results;
+                    return results;
+                }
+                else
+                {
+                    var results = await SecureFilesClient.GetAllAsync(project);
+
+                    return results;
+                }
             }
             catch (VssUnauthorizedException e)
             {
@@ -1266,33 +1307,7 @@ namespace LoDaTek.AzureDevOps.Client
             }
         }
 
-        /// <summary>
-        /// Gets the secure files for the specified project.
-        /// </summary>
-        /// <param name="project">The project.</param>
-        /// <returns>System.Threading.Tasks.Task&lt;System.Collections.Generic.List&lt;Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile&gt;&gt;.</returns>
-        public async Task<List<Microsoft.TeamFoundation.DistributedTask.WebApi.SecureFile>> GetSecureFile2Async(TeamProjectReference project)
-        {
-            try
-            {
-                var results = await SecureFilesClient.GetAllAsync(project);
 
-                return results;
-            }
-            catch (VssUnauthorizedException e)
-            {
-                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
-            }
-            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
-            {
-                throw new PATPermissionDeniedException(_devopsConnection.OrganisationName, "SecureFile", "Read", e);
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-        }
         #endregion
     }
 }

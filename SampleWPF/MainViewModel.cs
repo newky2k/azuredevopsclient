@@ -1,6 +1,7 @@
 ﻿using LoDaTek.AzureDevOps.Client;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
 using LoDaTek.AzureDevOps.Services.Client.Enums;
+using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Account;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace SampleWPF
         private string _pat;
         private IEnumerable<ServerType> _serverTypes;
         private ServerType _serverType;
+        private string _projectName;
+        private string _repoName;
 
         public string Name
 		{
@@ -53,6 +56,42 @@ namespace SampleWPF
                  
 			}
 		}
+
+        public string ProjectName
+        {
+            get { return _projectName; }
+            set
+            {
+                if (_projectName != value)
+                {
+                    _projectName = value;
+
+                    NotifyPropertyChanged(nameof(ProjectName));
+
+                    Properties.Settings.Default.ProjectName = value;
+                    Properties.Settings.Default.Save();
+                }
+
+            }
+        }
+
+        public string RepoName
+        {
+            get { return _repoName; }
+            set
+            {
+                if (_repoName != value)
+                {
+                    _repoName = value;
+
+                    NotifyPropertyChanged(nameof(RepoName));
+
+                    Properties.Settings.Default.RepoName = value;
+                    Properties.Settings.Default.Save();
+                }
+
+            }
+        }
 
 		public IEnumerable<ServerType> ServerTypes
 		{
@@ -94,9 +133,9 @@ namespace SampleWPF
 							{
 								var devOpsProvider = new AzureDevOpsProvider(cloudConnection);
 
-								var project = await devOpsProvider.FindProjectAsync("");
+								var project = await devOpsProvider.FindProjectAsync(ProjectName);
 
-								if (project != null)
+								if (project != null && !project.IsEmpty())
 								{
 									var variableGroups = await devOpsProvider.GetVariableGroupsAsync(project);
 
@@ -104,7 +143,18 @@ namespace SampleWPF
 
 									var secureFiles = await devOpsProvider.GetSecureFileAsync(project);
 
-									var secureFiles2 = await devOpsProvider.GetSecureFile2Async(project);
+									var repo = await devOpsProvider.GetRepositoryAsync(project, RepoName);
+
+									if (repo != null)
+									{
+										var branches = await devOpsProvider.GetBranchesAsync(repo);
+
+										if (branches.Any())
+										{
+
+										}
+									}
+								
 								}
 							}
 
@@ -134,6 +184,8 @@ namespace SampleWPF
 		{
 			_name = Properties.Settings.Default.OrganisationName;
 			_pat = Properties.Settings.Default.PAT;
+			_projectName = Properties.Settings.Default.ProjectName;
+			_repoName = Properties.Settings.Default.RepoName;
 
 			var values = Enum.GetValues(typeof(ServerType)).Cast<ServerType>();
 
