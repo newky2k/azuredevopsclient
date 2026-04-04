@@ -153,6 +153,10 @@ namespace LoDaTek.AzureDevOps.Services.Client.Bases
             }
         }
 
+        /// <summary>
+        /// Builds an authenticated HTTP client.
+        /// </summary>
+        /// <returns>HttpClient.</returns>
         private HttpClient BuildAuthenticationClient()
         {
             var handler = new HttpClientHandler();

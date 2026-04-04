@@ -669,6 +669,16 @@ namespace LoDaTek.AzureDevOps.Client
 
         //}
 
+        /// <summary>
+        /// Find work items as an asynchronous operation.
+        /// </summary>
+        /// <param name="workItemTypes">The work item types to include.</param>
+        /// <param name="projectRemoteId">The project remote identifier.</param>
+        /// <param name="projectName">Name of the project.</param>
+        /// <param name="includeClosed">if set to <c>true</c> includes closed work items.</param>
+        /// <param name="changedSince">If specified, only includes items changed after this date.</param>
+        /// <returns>A Task&lt;List`1&gt; representing the asynchronous operation.</returns>
+        /// <exception cref="PATPermissionDeniedException">Work Items - Read</exception>
         public async Task<List<AgileWorkItem>> FindWorkItemsAsync(IEnumerable<WorkItemType> workItemTypes, Guid projectRemoteId, string projectName, bool includeClosed, DateTime? changedSince)
         {
             try

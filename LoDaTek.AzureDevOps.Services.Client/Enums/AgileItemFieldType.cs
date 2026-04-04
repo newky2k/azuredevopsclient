@@ -13,60 +13,57 @@ namespace LoDaTek.AzureDevOps.Services.Client.Enums
         /// String field type.
         /// </summary>
         String = 0,
-        //
-        // Summary:
-        //     Integer field type.
+        /// <summary>
+        /// Integer field type.
+        /// </summary>
         Integer = 1,
-        //
-        // Summary:
-        //     Datetime field type.
+        /// <summary>
+        /// Datetime field type.
+        /// </summary>
         DateTime = 2,
-        //
-        // Summary:
-        //     Plain text field type.
+        /// <summary>
+        /// Plain text field type.
+        /// </summary>
         PlainText = 3,
-        //
-        // Summary:
-        //     HTML (Multiline) field type.
+        /// <summary>
+        /// HTML (Multiline) field type.
+        /// </summary>
         Html = 4,
-        //
-        // Summary:
-        //     Treepath field type.
+        /// <summary>
+        /// Treepath field type.
+        /// </summary>
         TreePath = 5,
-        //
-        // Summary:
-        //     History field type.
+        /// <summary>
+        /// History field type.
+        /// </summary>
         History = 6,
-        //
-        // Summary:
-        //     Double field type.
+        /// <summary>
+        /// Double field type.
+        /// </summary>
         Double = 7,
-        //
-        // Summary:
-        //     Guid field type.
+        /// <summary>
+        /// Guid field type.
+        /// </summary>
         Guid = 8,
-        //
-        // Summary:
-        //     Boolean field type.
+        /// <summary>
+        /// Boolean field type.
+        /// </summary>
         Boolean = 9,
-        //
-        // Summary:
-        //     Identity field type.
+        /// <summary>
+        /// Identity field type.
+        /// </summary>
         Identity = 10,
-        //
-        // Summary:
-        //     String picklist field type. When creating a string picklist field from REST API,
-        //     use "String" FieldType.
+        /// <summary>
+        /// String picklist field type. When creating a string picklist field from REST API, use "String" FieldType.
+        /// </summary>
         PicklistString = 11,
-        //
-        // Summary:
-        //     Integer picklist field type. When creating a integer picklist field from REST
-        //     API, use "Integer" FieldType.
+        /// <summary>
+        /// Integer picklist field type. When creating an integer picklist field from REST API, use "Integer" FieldType.
+        /// </summary>
         PicklistInteger = 12,
-        //
-        // Summary:
-        //     Double picklist field type. When creating a double picklist field from REST API,
-        //     use "Double" FieldType.
+        /// <summary>
+        /// Double picklist field type. When creating a double picklist field from REST API, use "Double" FieldType.
+        /// </summary>
         PicklistDouble = 13
     }
 }

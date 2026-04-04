@@ -99,6 +99,9 @@ namespace LoDaTek.AzureDevOps.Services.Client.Models
         /// <value>The comments.</value>
         public List<AgileItemComment> Comments { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AgileWorkItem"/> class.
+        /// </summary>
         public AgileWorkItem()
         {
             Fields = new List<AgileItemField>();

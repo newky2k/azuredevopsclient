@@ -21,6 +21,10 @@ namespace LoDaTek.AzureDevOps.Services.Client
     /// <seealso cref="DevOpsHttpClientBase" />
     public sealed class SecureFilesHttpClient : DevOpsHttpClientBase
     {
+        /// <summary>
+        /// Gets the test URL.
+        /// </summary>
+        /// <value>The test URL.</value>
         internal override string TestUrl => ApiUrl;
 
         /// <summary>
