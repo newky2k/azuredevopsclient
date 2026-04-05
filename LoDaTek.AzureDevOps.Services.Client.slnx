@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/.ci/">
+    <File Path="azure-pipelines-mergetest.yml" />
+    <File Path="azure-pipelines-release.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="LoDaTek.AzureDevOps.Client/LoDaTek.AzureDevOps.Client.csproj" />
+  <Project Path="LoDaTek.AzureDevOps.Services.Client/LoDaTek.AzureDevOps.Services.Client.csproj" />
+  <Project Path="SampleWPF/SampleWPF.csproj" />
+  <Project Path="TestApp/TestApp.csproj" />
+</Solution>
