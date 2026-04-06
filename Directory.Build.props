@@ -6,6 +6,7 @@
 		<RepositoryUrl>https://github.com/newky2k/azuredevopsclient</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<LangVersion>Latest</LangVersion>
 		<Authors>LoDaTek</Authors>
 		<PackageTags>Azure, Azure DevOps</PackageTags>

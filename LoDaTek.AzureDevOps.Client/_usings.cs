@@ -1,0 +1,16 @@
+﻿global using Jsonize;
+global using Jsonize.Abstractions.Models;
+global using Jsonize.Parser;
+global using Jsonize.Serializer;
+global using LoDaTek.AzureDevOps.Services.Client.Enums;
+global using LoDaTek.AzureDevOps.Services.Client.Models;
+global using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+global using Microsoft.VisualStudio.Services.WebApi;
+global using System.Text.RegularExpressions;
+global using System.Web;
+global using LoDaTek.AzureDevOps.Client.Builders;
+global using LoDaTek.AzureDevOps.Client.Extensions;
+global using LoDaTek.AzureDevOps.Services.Client;
+global using LoDaTek.AzureDevOps.Services.Client.Bases;
+global using LoDaTek.AzureDevOps.Services.Client.Connections;
+global using LoDaTek.AzureDevOps.Services.Client.Exceptions;

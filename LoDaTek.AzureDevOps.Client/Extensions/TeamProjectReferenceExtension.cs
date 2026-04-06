@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Microsoft.TeamFoundation.Core.WebApi;
 
 /// <summary>
-/// Class TeamProjectReferenceExtension.
+/// Team ProjectRe ference Extension.
 /// </summary>
 public static class TeamProjectReferenceExtension
 {

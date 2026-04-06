@@ -1,11 +1,4 @@
-﻿using LoDaTek.AzureDevOps.Client.Builders;
-using LoDaTek.AzureDevOps.Client.Extensions;
-using LoDaTek.AzureDevOps.Services.Client;
-using LoDaTek.AzureDevOps.Services.Client.Bases;
-using LoDaTek.AzureDevOps.Services.Client.Connections;
-using LoDaTek.AzureDevOps.Services.Client.Enums;
-using LoDaTek.AzureDevOps.Services.Client.Exceptions;
-using LoDaTek.AzureDevOps.Services.Client.Models;
+﻿
 using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -13,21 +6,15 @@ using Microsoft.TeamFoundation.DistributedTask.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 using Microsoft.VisualStudio.Services.Gallery.WebApi;
-using Microsoft.VisualStudio.Services.Organization;
-using Microsoft.VisualStudio.Services.Organization.Client;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using Microsoft.VisualStudio.Services.Security;
 using Microsoft.VisualStudio.Services.Security.Client;
-using Microsoft.VisualStudio.Services.WebApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
 
