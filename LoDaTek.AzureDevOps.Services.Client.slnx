@@ -9,6 +9,5 @@
   <Project Path="LoDaTek.AzureDevOps.Client/LoDaTek.AzureDevOps.Client.csproj" />
   <Project Path="LoDaTek.AzureDevOps.Services.Client/LoDaTek.AzureDevOps.Services.Client.csproj" />
   <Project Path="SampleMAUI/SampleMAUI.csproj" Id="e60f2b4b-548b-41d1-911b-7f3f10607f28" />
-  <Project Path="SampleWPF/SampleWPF.csproj" />
   <Project Path="TestApp/TestApp.csproj" />
 </Solution>

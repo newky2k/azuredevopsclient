@@ -6,7 +6,7 @@
 
         public MainViewModel ViewModel
         {
-            get { return _viewModel; }
+            get => _viewModel;
             set { _viewModel = value; BindingContext = _viewModel; }
         }
 
