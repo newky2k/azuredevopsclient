@@ -1,15 +1,8 @@
 ﻿using LoDaTek.AzureDevOps.Client;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
 using LoDaTek.AzureDevOps.Services.Client.Enums;
-using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
-using Microsoft.VisualStudio.Services.Account;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Mvvm;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SampleWPF

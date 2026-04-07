@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Mvvm;
 
 namespace SampleMAUI
 {
@@ -19,7 +20,15 @@ namespace SampleMAUI
     		builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            builder.Services.AddCoreUI();
+
+            var app = builder.Build();
+
+            //configure the servicehost host
+            ServiceHost.Host = new MauiHostProxy(app);
+
+           
+            return app;
         }
     }
 }

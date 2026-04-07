@@ -1,5 +1,4 @@
 ﻿
-
 namespace LoDaTek.AzureDevOps.Client.Extensions;
 
 /// <summary>

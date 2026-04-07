@@ -14,3 +14,4 @@ global using LoDaTek.AzureDevOps.Services.Client;
 global using LoDaTek.AzureDevOps.Services.Client.Bases;
 global using LoDaTek.AzureDevOps.Services.Client.Connections;
 global using LoDaTek.AzureDevOps.Services.Client.Exceptions;
+global using System.Xml;

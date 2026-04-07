@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Azure.Pipelines.WebApi;
+﻿using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.DistributedTask.WebApi;
@@ -950,7 +949,7 @@ namespace LoDaTek.AzureDevOps.Client
                     if (data == null)
                         return null;
 
-                    var output = JsonConvert.SerializeObject(data, Formatting.Indented, jsonSettings);
+                    var output = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented, jsonSettings);
 
                     return output;
 
@@ -963,7 +962,7 @@ namespace LoDaTek.AzureDevOps.Client
                         return null;
 
                     //var output = await Client.GetStringAsync(new Uri(data.Url));
-                    var output = JsonConvert.SerializeObject(data, Formatting.Indented, jsonSettings);
+                    var output = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented, jsonSettings);
 
                     return output;
                 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -67,9 +67,16 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="DSoft.System.Mvvm.Hosting" Version="3.5.2511.161" />
+		<PackageReference Include="DSoft.System.Mvvm.UI.MAUI" Version="3.5.2511.161" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
 		<PackageReference Include="DSoft.System.Mvvm" Version="3.5.2511.161" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\LoDaTek.AzureDevOps.Client\LoDaTek.AzureDevOps.Client.csproj" />
+	  <ProjectReference Include="..\LoDaTek.AzureDevOps.Services.Client\LoDaTek.AzureDevOps.Services.Client.csproj" />
 	</ItemGroup>
 
 </Project>
