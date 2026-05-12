@@ -14,15 +14,15 @@ pool:
 
 variables:
 - name: solution
-  value: '**/*.sln'
+  value: '**/*.slnx'
 - name: buildPlatform
   value: 'Any CPU'
 - name: buildConfiguration
   value: 'Release'
 - name: netVersion
-  value: '9.x'
+  value: '10.0.107'
 
-name: 1.0.$(date:yyMM).$(date:dd)$(rev:r)
+name: 1.1.$(date:yyMM).$(date:dd)$(rev:r)
 steps:
 
 - task: NuGetToolInstaller@1

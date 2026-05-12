@@ -6,11 +6,23 @@
 		<RepositoryUrl>https://github.com/newky2k/azuredevopsclient</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
 		<LangVersion>Latest</LangVersion>
 		<Authors>LoDaTek</Authors>
 		<PackageTags>Azure, Azure DevOps</PackageTags>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\DSIcon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	
 	<PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>

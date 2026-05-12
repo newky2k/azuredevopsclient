@@ -10,13 +10,13 @@ pool:
 
 variables:
 - name: solution
-  value: '**/*.sln'
+  value: '**/*.slnx'
 - name: buildPlatform
   value: 'Any CPU'
 - name: buildConfiguration
   value: 'Release'
 - name: netVersion
-  value: '9.x'
+  value: '10.0.107'
 
 steps:
 

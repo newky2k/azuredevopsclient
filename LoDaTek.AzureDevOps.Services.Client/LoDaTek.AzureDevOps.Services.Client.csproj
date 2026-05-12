@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0;</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net9.0;net10.0;</TargetFrameworks>
 		<Summary>Client access library for the Azure DevOps Rest API</Summary>
 		<Description>Client access library for the Azure DevOps Rest API, for the bits missing from the official library such as feeds and packages</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -10,20 +10,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.TeamFoundation.DistributedTask.WebApi" Version="19.225.1" />
-		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.1" />
+		<PackageReference Include="Microsoft.TeamFoundation.DistributedTask.WebApi" Version="20.256.2" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="20.256.2" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="[8.0.0]" />
 	</ItemGroup>
 	
 	<ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
-		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-		<PackageReference Include="System.Text.Json" Version="5.0.2" />
+		<PackageReference Include="System.Net.Http.Json" Version="10.0.8" />
+		<PackageReference Include="System.Text.Json" Version="10.0.8" />
 	</ItemGroup>
 	
 </Project>
