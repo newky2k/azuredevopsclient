@@ -34,13 +34,6 @@ steps:
     packageType: 'sdk'
     version: $(netVersion)
 
-- task: Bash@3
-  displayName: Install MAUI
-  inputs:
-    targetType: 'inline'
-    script: 
-      dotnet workload restore
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'

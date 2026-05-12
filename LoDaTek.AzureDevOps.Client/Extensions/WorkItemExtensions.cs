@@ -18,7 +18,7 @@ public static class WorkItemExtensions
     /// <param name="fields">The fields.</param>
     /// <param name="workItemFields">The work item fields.</param>
     /// <returns></returns>
-    public static async Task<AgileWorkItem> ToLocalAsync(this WorkItem target, Dictionary<string, string> fields, IEnumerable<WorkItemField> workItemFields)
+    public static Task<AgileWorkItem> ToLocalAsync(this WorkItem target, Dictionary<string, string> fields, IEnumerable<WorkItemField> workItemFields)
     {
         var projectUrl = target.Url.Substring(0, target.Url.IndexOf("/_apis/wit"));
 
@@ -132,19 +132,7 @@ public static class WorkItemExtensions
 
         if (!string.IsNullOrWhiteSpace(newItem.Description) && newItem.Description.Contains("_apis/wit/attachments"))
         {
-
-            var parser = new JsonizeParser();
-            var serializer = new JsonizeSerializer();
-
-            var jsonizer = new Jsonizer(parser, serializer);
-
-            var str = await jsonizer.ParseToStringAsync(newItem.Description);
-            var output = await jsonizer.ParseToJsonizeNodeAsync(newItem.Description);
-
-
-            var images = new List<string>();
-
-            FindImages(images, output);
+            var images = FindImages(newItem.Description);
 
             if (images.Any())
             {
@@ -184,7 +172,7 @@ public static class WorkItemExtensions
 
 
 
-        return newItem;
+        return Task.FromResult(newItem);
     }
 
     /// <summary>
@@ -193,7 +181,7 @@ public static class WorkItemExtensions
     /// <param name="target">The target.</param>
     /// <param name="agileItem">The agile item.</param>
     /// <returns></returns>
-    public static async Task<AgileItemComment> ToLocal(this Comment target, AgileWorkItem agileItem)
+    public static Task<AgileItemComment> ToLocal(this Comment target, AgileWorkItem agileItem)
     {
         var comment = new AgileItemComment()
         {
@@ -214,19 +202,7 @@ public static class WorkItemExtensions
         {
             var projectUrl = target.Url.Substring(0, target.Url.IndexOf("/_apis/wit"));
 
-            //var jsonizer = new Jsonize(comment.Text);
-            var parser = new JsonizeParser();
-            var serializer = new JsonizeSerializer();
-
-            var jsonizer = new Jsonizer(parser, serializer);
-
-            var str = await jsonizer.ParseToStringAsync(comment.Text);
-            var output = await jsonizer.ParseToJsonizeNodeAsync(comment.Text);
-
-
-            var images = new List<string>();
-
-            FindImages(images, output);
+            var images = FindImages(comment.Text);
 
             if (images.Any())
             {
@@ -264,7 +240,7 @@ public static class WorkItemExtensions
             comment.Text = HttpUtility.HtmlEncode(comment.Text);
         }
 
-        return comment;
+        return Task.FromResult(comment);
     }
 
     /// <summary>
@@ -306,25 +282,17 @@ public static class WorkItemExtensions
     /// <summary>
     /// Finds the images.
     /// </summary>
-    /// <param name="items">The items.</param>
-    /// <param name="node">The node.</param>
-    private static void FindImages(List<string> items, JsonizeNode node)
+    /// <param name="html">The html.</param>
+    private static IEnumerable<string> FindImages(string html)
     {
-        if (node.Tag == "img")
-        {
-            var byName = node.Attr;
+        var document = new HtmlDocument();
 
-            items.Add(byName["src"].ToString());
+        document.LoadHtml(html);
 
-        }
-
-        if (node.Children != null)
-        {
-            foreach (var child in node.Children)
-            {
-                FindImages(items, child);
-            }
-        }
-
+        return document.DocumentNode
+            .SelectNodes("//img[@src]")
+            ?.Select(x => x.GetAttributeValue("src", string.Empty))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            ?? Enumerable.Empty<string>();
     }
 }
