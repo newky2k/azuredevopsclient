@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<SignAssembly>false</SignAssembly>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="DSoft.System.Mvvm" Version="3.5.2604.111" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\LoDaTek.AzureDevOps.Client\LoDaTek.AzureDevOps.Client.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -20,7 +20,7 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - name: netVersion
-  value: '10.0.105'
+  value: '10.0.107'
 
 name: 1.1.$(date:yyMM).$(date:dd)$(rev:r)
 steps:
