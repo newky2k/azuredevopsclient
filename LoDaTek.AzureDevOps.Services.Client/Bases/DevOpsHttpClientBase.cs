@@ -45,7 +45,20 @@ public abstract class DevOpsHttpClientBase
     /// Gets the client.
     /// </summary>
     /// <value>The client.</value>
-    protected HttpClient Client => _client ??= BuildAuthenticationClient(ApiUrl);
+    protected HttpClient Client
+    {
+        get
+        {
+            var factory = _connection.HttpClientFactory;
+
+            // Factory clients are pooled and short-lived: resolve a fresh one each
+            // time and never cache or dispose it (the factory owns the handler).
+            if (factory != null)
+                return ConfigureClient(factory.CreateClient(DevOpsConnectionBase.HttpClientName));
+
+            return _client ??= BuildAuthenticationClient(ApiUrl);
+        }
+    }
 
     /// <summary>
     /// Gets the API URL.
@@ -120,16 +133,16 @@ public abstract class DevOpsHttpClientBase
     }
 
     /// <summary>
-    /// Builds an authenticated HTTP client.
+    /// Applies the base address (when unset), accept and authorization headers.
+    /// Used for both self-built and factory-provided clients.
     /// </summary>
+    /// <param name="client">The client to configure.</param>
     /// <returns>HttpClient.</returns>
-    private HttpClient BuildAuthenticationClient()
+    private HttpClient ConfigureClient(HttpClient client)
     {
-        var handler = new HttpClientHandler();
-        handler.AllowAutoRedirect = false;
+        if (client.BaseAddress == null)
+            client.BaseAddress = new Uri(ApiUrl);
 
-        var client = new HttpClient(handler);
-        client.Timeout = TimeSpan.FromSeconds(30);
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
@@ -138,17 +151,18 @@ public abstract class DevOpsHttpClientBase
     }
 
     /// <summary>
-    /// Builds the authentication client.
+    /// Builds a self-managed authenticated HTTP client (used when no factory is set).
     /// </summary>
-    /// <param name="url">The URL.</param>
+    /// <param name="url">The base URL.</param>
     /// <returns>HttpClient.</returns>
     private HttpClient BuildAuthenticationClient(string url)
     {
-        var client = BuildAuthenticationClient();
+        var handler = new HttpClientHandler { AllowAutoRedirect = false };
 
+        var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
         client.BaseAddress = new Uri(url);
 
-        return client;
+        return ConfigureClient(client);
     }
 
     /// <summary>
