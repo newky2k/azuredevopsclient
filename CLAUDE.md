@@ -19,11 +19,12 @@ No `.sln` file. Build per-project or the whole folder:
 dotnet build LoDaTek.AzureDevOps.Services.Client/LoDaTek.AzureDevOps.Services.Client.csproj
 dotnet build LoDaTek.AzureDevOps.Client/LoDaTek.AzureDevOps.Client.csproj
 dotnet run --project TestApp        # console smoke test
+dotnet test LoDaTek.AzureDevOps.Tests/LoDaTek.AzureDevOps.Tests.csproj   # unit tests
 ```
 
 Both libraries multi-target `netstandard2.0;net9.0;net10.0`. The `netstandard2.0` target gets extra `System.Net.Http.Json` / `System.Text.Json` package references (see conditional `ItemGroup` in Services.Client csproj) — preserve that when touching JSON code so netstandard keeps compiling.
 
-No test project exists.
+`LoDaTek.AzureDevOps.Tests` (MSTest, net9.0) holds the unit tests — pure-logic coverage (connection URLs, `WiqlBuilder`, DI registration) plus offline HTTP tests that inject a stub `IHttpClientFactory` to exercise `TryConnect`/auth without a live server. It overrides the signing/packaging defaults from `Directory.Build.props`. Live API calls remain manual via `TestApp`.
 
 ## Architecture (Services.Client)
 
