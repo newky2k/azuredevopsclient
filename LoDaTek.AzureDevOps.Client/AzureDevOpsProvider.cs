@@ -40,11 +40,10 @@ public class AzureDevOpsProvider
     private ReleaseHttpClient _releaseClient;
     private SecurityHttpClient _securityClient;
     private ExtensionManagementHttpClient _extensionClient;
-    private GalleryHttpClient _galleryClient;
     private TaskAgentHttpClient _taskAgentHttpClient;
     private PipelinesHttpClient _pipelinesHttpClient;
-
-    IDevOpsConnection _restApiConnection;
+    private TeamHttpClient _teamClient;
+    private HttpClient _galleryNetClient;
 
     #endregion
 
@@ -234,12 +233,15 @@ public class AzureDevOpsProvider
     {
         get
         {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            if (_galleryNetClient == null)
+            {
+                _galleryNetClient = new HttpClient();
+                _galleryNetClient.DefaultRequestHeaders.Accept.Clear();
+                _galleryNetClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                _galleryNetClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            }
 
-            return client;
+            return _galleryNetClient;
         }
     }
 
@@ -288,6 +290,20 @@ public class AzureDevOpsProvider
         }
     }
 
+    /// <summary>
+    /// Gets the pipelines client.
+    /// </summary>
+    /// <value>The pipelines client.</value>
+    public TeamHttpClient TeamClient
+    {
+        get
+        {
+            if (_teamClient == null)
+                _teamClient = Connection.GetClient<TeamHttpClient>();
+
+            return _teamClient;
+        }
+    }
     #endregion
 
     #region Constructors
@@ -354,7 +370,7 @@ public class AzureDevOpsProvider
                 return project;
             }
         }
-        catch (ProjectDoesNotExistWithNameException e)
+        catch (ProjectDoesNotExistWithNameException)
         {
             // if project not found then just return null
             return null;
@@ -591,7 +607,12 @@ public class AzureDevOpsProvider
     {
         try
         {
+            // GetFieldsAsync is obsolete; the replacement GetWorkItemFieldsAsync returns the newer
+            // WorkItemField2 model, which would change this method's public return type. Suppress here
+            // to keep the existing public signature.
+#pragma warning disable CS0612
             var fields = await WorkItemClient.GetFieldsAsync(projectRemoteId);
+#pragma warning restore CS0612
 
             return fields;
         }
@@ -1212,7 +1233,7 @@ public class AzureDevOpsProvider
 
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (tries > maxTries)
                         throw;

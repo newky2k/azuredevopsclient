@@ -17,6 +17,7 @@ public abstract class DevOpsHttpClientBase
 
     private DevOpsConnectionBase _connection;
     private ApiType _apiType;
+    private HttpClient _client;
 
     #endregion
 
@@ -48,9 +49,14 @@ public abstract class DevOpsHttpClientBase
     {
         get
         {
-            var client = BuildAuthenticationClient(ApiUrl);
+            var factory = _connection.HttpClientFactory;
 
-            return client;
+            // Factory clients are pooled and short-lived: resolve a fresh one each
+            // time and never cache or dispose it (the factory owns the handler).
+            if (factory != null)
+                return ConfigureClient(factory.CreateClient(DevOpsConnectionBase.HttpClientName));
+
+            return _client ??= BuildAuthenticationClient(ApiUrl);
         }
     }
 
@@ -98,29 +104,7 @@ public abstract class DevOpsHttpClientBase
     /// Tries the connect.
     /// </summary>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    internal bool TryConnect()
-    {
-        try
-        {
-            var client = BuildAuthenticationClient();
-            client.Timeout = TimeSpan.FromSeconds(3000);
-
-            var task = Task.Run(() => client.GetAsync(TestUrl));
-            task.Wait();
-            var response = task.Result;
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+    internal bool TryConnect() => TryConnectAsync().GetAwaiter().GetResult();
 
     /// <summary>
     /// Try connect as an asynchronous operation.
@@ -130,18 +114,17 @@ public abstract class DevOpsHttpClientBase
     {
         try
         {
-            var client = BuildAuthenticationClient();
-            client.Timeout = TimeSpan.FromSeconds(3000);
+            var response = await Client.GetAsync(TestUrl);
 
-            var result = await client.GetAsync(TestUrl);
-
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            switch (response.StatusCode)
             {
-                return false;
+                case HttpStatusCode.NotFound:
+                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.Forbidden:
+                    return false;
+                default:
+                    return true;
             }
-
-            return true;
-
         }
         catch
         {
@@ -150,15 +133,16 @@ public abstract class DevOpsHttpClientBase
     }
 
     /// <summary>
-    /// Builds an authenticated HTTP client.
+    /// Applies the base address (when unset), accept and authorization headers.
+    /// Used for both self-built and factory-provided clients.
     /// </summary>
+    /// <param name="client">The client to configure.</param>
     /// <returns>HttpClient.</returns>
-    private HttpClient BuildAuthenticationClient()
+    private HttpClient ConfigureClient(HttpClient client)
     {
-        var handler = new HttpClientHandler();
-        handler.AllowAutoRedirect = false;
+        if (client.BaseAddress == null)
+            client.BaseAddress = new Uri(ApiUrl);
 
-        var client = new HttpClient(handler);
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
@@ -167,17 +151,18 @@ public abstract class DevOpsHttpClientBase
     }
 
     /// <summary>
-    /// Builds the authentication client.
+    /// Builds a self-managed authenticated HTTP client (used when no factory is set).
     /// </summary>
-    /// <param name="url">The URL.</param>
+    /// <param name="url">The base URL.</param>
     /// <returns>HttpClient.</returns>
     private HttpClient BuildAuthenticationClient(string url)
     {
-        var client = BuildAuthenticationClient();
+        var handler = new HttpClientHandler { AllowAutoRedirect = false };
 
+        var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
         client.BaseAddress = new Uri(url);
 
-        return client;
+        return ConfigureClient(client);
     }
 
     /// <summary>
@@ -186,7 +171,8 @@ public abstract class DevOpsHttpClientBase
     /// <exception cref="NotImplementedException"></exception>
     public void Dispose()
     {
-
+        _client?.Dispose();
+        _client = null;
     }
 
     #endregion

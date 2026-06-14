@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Net.Http;
 using LoDaTek.AzureDevOps.Services.Client.Connections;
 using LoDaTek.AzureDevOps.Services.Client.Enums;
 using LoDaTek.AzureDevOps.Services.Client.Exceptions;
@@ -19,9 +20,32 @@ public abstract class DevOpsConnectionBase : IDisposable, IDevOpsConnection
     #region Fields
     private string _personalAccessToken;
     private string _organisationName;
+    private IHttpClientFactory _httpClientFactory;
+    #endregion
+
+    #region Constants
+
+    /// <summary>
+    /// Name of the <see cref="HttpClient"/> registered via
+    /// <c>AddAzureDevOpsHttpClient</c> and resolved from <see cref="HttpClientFactory"/>.
+    /// </summary>
+    public const string HttpClientName = "LoDaTek.AzureDevOps";
+
     #endregion
 
     #region Properties
+
+    /// <summary>
+    /// Gets or sets the optional HTTP client factory.
+    /// When set, REST clients resolve their <see cref="HttpClient"/> from the factory
+    /// (using <see cref="HttpClientName"/>) instead of a self-managed instance.
+    /// </summary>
+    /// <value>The HTTP client factory, or <c>null</c> to use the built-in client.</value>
+    public IHttpClientFactory HttpClientFactory
+    {
+        get { return _httpClientFactory; }
+        set { _httpClientFactory = value; }
+    }
 
     /// <summary>
     /// Gets the name of the organisation.

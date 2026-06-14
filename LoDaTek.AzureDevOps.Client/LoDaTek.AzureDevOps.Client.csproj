@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net9.0;net10.0;</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net10.0;</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Summary>Wrapper for Azure DevOps Client libraries</Summary>
 		<Description>Wrapper for Azure DevOps Client libraries to make it easier to access both supported and unsupported Rest APIs</Description>
@@ -15,6 +15,10 @@
 		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="20.256.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="20.256.2" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+		<!-- Pin patched versions to override vulnerable transitive packages pulled by the VisualStudio.Services SDK -->
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.17" />
+		<PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.17" />
 	</ItemGroup>
 
 	<ItemGroup>

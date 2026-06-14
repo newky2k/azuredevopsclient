@@ -44,3 +44,23 @@ Works with:
 
         Console.WriteLine($"Cloud Feeds: {feedCount}");
     }
+
+# Using IHttpClientFactory (optional)
+
+By default each connection manages its own `HttpClient`. In a DI app you can instead
+have the REST clients resolve a pooled `HttpClient` from `IHttpClientFactory`.
+
+Register the named client (matches the built-in config — redirects disabled, 30s timeout):
+
+    using LoDaTek.AzureDevOps.Services.Client.Extensions;
+
+    services.AddAzureDevOpsHttpClient();
+
+Then assign the factory to the connection. When `HttpClientFactory` is set, clients are
+resolved from the factory; when it is `null` the built-in client is used, so existing
+code keeps working unchanged.
+
+    var connection = new AzureDevOpsCloudConnection(orgName, pat)
+    {
+        HttpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>()
+    };
