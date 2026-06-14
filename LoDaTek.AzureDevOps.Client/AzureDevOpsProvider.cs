@@ -40,13 +40,10 @@ public class AzureDevOpsProvider
     private ReleaseHttpClient _releaseClient;
     private SecurityHttpClient _securityClient;
     private ExtensionManagementHttpClient _extensionClient;
-    private GalleryHttpClient _galleryClient;
     private TaskAgentHttpClient _taskAgentHttpClient;
     private PipelinesHttpClient _pipelinesHttpClient;
     private TeamHttpClient _teamClient;
     private HttpClient _galleryNetClient;
-
-    IDevOpsConnection _restApiConnection;
 
     #endregion
 
@@ -373,7 +370,7 @@ public class AzureDevOpsProvider
                 return project;
             }
         }
-        catch (ProjectDoesNotExistWithNameException e)
+        catch (ProjectDoesNotExistWithNameException)
         {
             // if project not found then just return null
             return null;
@@ -610,7 +607,12 @@ public class AzureDevOpsProvider
     {
         try
         {
+            // GetFieldsAsync is obsolete; the replacement GetWorkItemFieldsAsync returns the newer
+            // WorkItemField2 model, which would change this method's public return type. Suppress here
+            // to keep the existing public signature.
+#pragma warning disable CS0612
             var fields = await WorkItemClient.GetFieldsAsync(projectRemoteId);
+#pragma warning restore CS0612
 
             return fields;
         }
@@ -1231,7 +1233,7 @@ public class AzureDevOpsProvider
 
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (tries > maxTries)
                         throw;
