@@ -17,6 +17,7 @@ public abstract class DevOpsHttpClientBase
 
     private DevOpsConnectionBase _connection;
     private ApiType _apiType;
+    private HttpClient _client;
 
     #endregion
 
@@ -44,15 +45,7 @@ public abstract class DevOpsHttpClientBase
     /// Gets the client.
     /// </summary>
     /// <value>The client.</value>
-    protected HttpClient Client
-    {
-        get
-        {
-            var client = BuildAuthenticationClient(ApiUrl);
-
-            return client;
-        }
-    }
+    protected HttpClient Client => _client ??= BuildAuthenticationClient(ApiUrl);
 
     /// <summary>
     /// Gets the API URL.
@@ -98,29 +91,7 @@ public abstract class DevOpsHttpClientBase
     /// Tries the connect.
     /// </summary>
     /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-    internal bool TryConnect()
-    {
-        try
-        {
-            var client = BuildAuthenticationClient();
-            client.Timeout = TimeSpan.FromSeconds(3000);
-
-            var task = Task.Run(() => client.GetAsync(TestUrl));
-            task.Wait();
-            var response = task.Result;
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+    internal bool TryConnect() => TryConnectAsync().GetAwaiter().GetResult();
 
     /// <summary>
     /// Try connect as an asynchronous operation.
@@ -130,18 +101,17 @@ public abstract class DevOpsHttpClientBase
     {
         try
         {
-            var client = BuildAuthenticationClient();
-            client.Timeout = TimeSpan.FromSeconds(3000);
+            var response = await Client.GetAsync(TestUrl);
 
-            var result = await client.GetAsync(TestUrl);
-
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            switch (response.StatusCode)
             {
-                return false;
+                case HttpStatusCode.NotFound:
+                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.Forbidden:
+                    return false;
+                default:
+                    return true;
             }
-
-            return true;
-
         }
         catch
         {
@@ -159,6 +129,7 @@ public abstract class DevOpsHttpClientBase
         handler.AllowAutoRedirect = false;
 
         var client = new HttpClient(handler);
+        client.Timeout = TimeSpan.FromSeconds(30);
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
@@ -186,7 +157,8 @@ public abstract class DevOpsHttpClientBase
     /// <exception cref="NotImplementedException"></exception>
     public void Dispose()
     {
-
+        _client?.Dispose();
+        _client = null;
     }
 
     #endregion

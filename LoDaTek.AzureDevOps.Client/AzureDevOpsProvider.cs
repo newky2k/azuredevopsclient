@@ -44,6 +44,7 @@ public class AzureDevOpsProvider
     private TaskAgentHttpClient _taskAgentHttpClient;
     private PipelinesHttpClient _pipelinesHttpClient;
     private TeamHttpClient _teamClient;
+    private HttpClient _galleryNetClient;
 
     IDevOpsConnection _restApiConnection;
 
@@ -235,12 +236,15 @@ public class AzureDevOpsProvider
     {
         get
         {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            if (_galleryNetClient == null)
+            {
+                _galleryNetClient = new HttpClient();
+                _galleryNetClient.DefaultRequestHeaders.Accept.Clear();
+                _galleryNetClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                _galleryNetClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            }
 
-            return client;
+            return _galleryNetClient;
         }
     }
 

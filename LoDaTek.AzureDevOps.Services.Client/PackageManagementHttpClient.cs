@@ -45,39 +45,29 @@ public class PackageManagementHttpClient : DevOpsHttpClientBase
     /// <returns>A Task&lt;System.String&gt; representing the asynchronous operation.</returns>
     public async Task<string> GetNugetBasePathAsync(string feedName, string projectName = null)
     {
-        using (var wclient = Client)
+        var wclient = Client;
+
+        var url = GetNuGetUrl(feedName, projectName);
+
+        var response = await wclient.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
         {
-            var url = GetNuGetUrl(feedName, projectName);
+            //set the viewmodel from the content in the response
+            var queryResult = await response.Content.ReadFromJsonAsync<ServiceDetails>();
 
-            var response = await wclient.GetAsync(url);
+            if (queryResult == null)
+                return null;
 
-            //var queryResult = JsonConvert.DeserializeObject<ServiceDetails>(result);
+            var queryResource = queryResult["SearchQueryService/3.0.0-beta"];
+            var packageBaseResource = queryResult["PackageBaseAddress/3.0.0"];
 
-            if (response.IsSuccessStatusCode)
+            if (queryResource == null || packageBaseResource == null)
             {
-
-                var json = await response.Content.ReadAsStringAsync();
-
-                //set the viewmodel from the content in the response
-                var queryResult = await response.Content.ReadFromJsonAsync<ServiceDetails>();
-
-                if (queryResult == null)
-                    return null;
-
-                var queryResource = queryResult["SearchQueryService/3.0.0-beta"];
-                var packageBaseResource = queryResult["PackageBaseAddress/3.0.0"];
-                var feedDetails = queryResult["VssFeedId"];
-
-                if (queryResource == null || packageBaseResource == null)
-                {
-                    return null;
-                }
-
-                var queryUrl = queryResource.Id;
-                var packageBaseUrl = packageBaseResource.Id;
-
-                return packageBaseUrl;
+                return null;
             }
+
+            return packageBaseResource.Id;
         }
 
         return null;
@@ -97,40 +87,36 @@ public class PackageManagementHttpClient : DevOpsHttpClientBase
         var tries = 0;
         var maxTries = 10;
 
-        using (var wclient = Client)
+        var wclient = Client;
+
+        var packageUrl = $"{baseUrl}/{packageName}/{packageVersion}/{packageName}.{packageVersion}.nupkg";
+
+        while (true)
         {
-            var packageUrl = $"{baseUrl}/{packageName}/{packageVersion}/{packageName}.{packageVersion}.nupkg";
-
-            while (true)
+            try
             {
-                try
-                {
-                    var response = await wclient.GetAsync(new Uri(packageUrl, UriKind.Absolute));
+                var response = await wclient.GetAsync(new Uri(packageUrl, UriKind.Absolute));
 
-                    response.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();
 
-                    var data = await response.Content.ReadAsByteArrayAsync();
+                var data = await response.Content.ReadAsByteArrayAsync();
 #if NETSTANDARD2_0
-                    File.WriteAllBytes(outPutFileName, data);
+                File.WriteAllBytes(outPutFileName, data);
 #else
-                    await File.WriteAllBytesAsync(outPutFileName, data);
+                await File.WriteAllBytesAsync(outPutFileName, data);
 #endif
-                    return;
-                }
-                catch
-                {
-                    if (tries > maxTries)
-                        throw;
-
-                    await Task.Delay(5000);
-
-                    tries++;
-                }
+                return;
             }
+            catch
+            {
+                if (tries > maxTries)
+                    throw;
 
+                await Task.Delay(5000);
+
+                tries++;
+            }
         }
-
-        throw new RequestFailureException("Unable to fetch packages");
     }
 
 

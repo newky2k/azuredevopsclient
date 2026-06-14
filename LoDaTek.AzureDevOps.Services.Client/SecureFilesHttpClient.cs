@@ -41,22 +41,21 @@ public sealed class SecureFilesHttpClient : DevOpsHttpClientBase
     /// <exception cref="RequestFailureException">Unable to find feeds</exception>
     public async Task<List<SecureFile>> GetAllAsync(TeamProjectReference project)
     {
-        using (var client = Client)
+        var client = Client;
+
+        var requestUrl = BuildApiUrl(project);
+
+        var response = await client.GetAsync(requestUrl);
+
+        //check to see if we have a successful response
+        if (response.IsSuccessStatusCode)
         {
-            var requestUrl = BuildApiUrl(project);
+            //set the viewmodel from the content in the response
+            var result = await response.Content.ReadAsAsync<VssJsonCollectionWrapper<List<SecureFile>>>(new MediaTypeFormatter[1] { new VssJsonMediaTypeFormatter() });
 
-            var response = await client.GetAsync(requestUrl);
-
-            //check to see if we have a successful response
-            if (response.IsSuccessStatusCode)
+            if (result != null)
             {
-                //set the viewmodel from the content in the response
-                var result = await response.Content.ReadAsAsync<VssJsonCollectionWrapper<List<SecureFile>>>(new MediaTypeFormatter[1] { new VssJsonMediaTypeFormatter() });
-
-                if (result != null)
-                {
-                    return result.Value;
-                }
+                return result.Value;
             }
         }
 

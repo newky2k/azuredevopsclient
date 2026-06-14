@@ -45,19 +45,18 @@ public sealed class FeedManagmentHttpClient : DevOpsHttpClientBase
     /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to find feeds</exception>
     public async Task<List<Feed>> GetFeedsAsync()
     {
-        using (var client = Client)
+        var client = Client;
+
+        var response = await client.GetAsync("packaging/feeds?api-version=5.0-preview.1");
+
+        //check to see if we have a successful response
+        if (response.IsSuccessStatusCode)
         {
-            var response = await client.GetAsync("packaging/feeds?api-version=5.0-preview.1");
+            //set the viewmodel from the content in the response
+            var result = await response.Content.ReadFromJsonAsync<FeedResponse>();
 
-            //check to see if we have a successful response
-            if (response.IsSuccessStatusCode)
-            {
-                //set the viewmodel from the content in the response
-                var result = await response.Content.ReadFromJsonAsync<FeedResponse>();
-
-                if (result != null)
-                    return result.Feeds;
-            }
+            if (result != null)
+                return result.Feeds;
         }
 
         throw new RequestFailureException("Unable to find feeds");
@@ -78,21 +77,18 @@ public sealed class FeedManagmentHttpClient : DevOpsHttpClientBase
     /// <exception cref="LoDaTek.AzureDevOps.Services.Client.Exceptions.RequestFailureException">Unable to fetch packages</exception>
     public async Task<List<Package>> GetPackagesAsync(Guid feedId)
     {
-        using (var client = Client)
+        var client = Client;
+
+        var response = await client.GetAsync($"packaging/feeds/{feedId}/packages?includeAllVersions=true&api-version=5.0-preview.1");
+
+        //check to see if we have a successful response
+        if (response.IsSuccessStatusCode)
         {
-            var response = await client.GetAsync($"packaging/feeds/{feedId}/packages?includeAllVersions=true&api-version=5.0-preview.1");
+            //set the viewmodel from the content in the response
+            var result = await response.Content.ReadFromJsonAsync<PackagesResponse>();
 
-            //check to see if we have a successful response
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-
-                //set the viewmodel from the content in the response
-                var result = await response.Content.ReadFromJsonAsync<PackagesResponse>();
-
-                if (result != null)
-                    return result.Packages;
-            }
+            if (result != null)
+                return result.Packages;
         }
 
         throw new RequestFailureException("Unable to fetch packages");
