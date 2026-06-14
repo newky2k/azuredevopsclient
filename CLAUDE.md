@@ -9,7 +9,7 @@ Two NuGet libraries for Azure DevOps REST API access:
 - **LoDaTek.AzureDevOps.Services.Client** — standalone, lightweight client for REST APIs *missing* from the official SDK (feeds, NuGet packages, secure files, some agile/work-item bits). Depends only on `Microsoft.TeamFoundation*` task/server packages + `System.Text.Json`. This is the lower layer.
 - **LoDaTek.AzureDevOps.Client** — wrapper over the *official* `Microsoft.VisualStudio.Services.*` SDK clients (Git, TFVC, WorkItem, Wiki, Build, Release, Pipelines, etc.) plus a project reference to Services.Client. `AzureDevOpsProvider` exposes all official clients lazily and adds builders/extensions (`WiqlBuilder`, work-item extensions). This is the higher layer.
 
-`SampleWPF` (net9.0-windows) and `TestApp` (net9.0 console) are example consumers, not shipped.
+`SampleWPF` (net10.0-windows) and `TestApp` (net10.0 console) are example consumers, not shipped.
 
 ## Build / Run
 
@@ -22,9 +22,9 @@ dotnet run --project TestApp        # console smoke test
 dotnet test LoDaTek.AzureDevOps.Tests/LoDaTek.AzureDevOps.Tests.csproj   # unit tests
 ```
 
-Both libraries multi-target `netstandard2.0;net9.0;net10.0`. The `netstandard2.0` target gets extra `System.Net.Http.Json` / `System.Text.Json` package references (see conditional `ItemGroup` in Services.Client csproj) — preserve that when touching JSON code so netstandard keeps compiling.
+Both libraries multi-target `netstandard2.0;net10.0`. The `netstandard2.0` target gets extra `System.Net.Http.Json` / `System.Text.Json` package references (see conditional `ItemGroup` in Services.Client csproj) — preserve that when touching JSON code so netstandard keeps compiling.
 
-`LoDaTek.AzureDevOps.Tests` (MSTest, net9.0) holds the tests. It overrides the signing/packaging defaults from `Directory.Build.props`.
+`LoDaTek.AzureDevOps.Tests` (MSTest, net10.0) holds the tests. It overrides the signing/packaging defaults from `Directory.Build.props`.
 
 - **Unit tests** (always run): pure-logic coverage (connection URLs, `WiqlBuilder`, DI registration) plus offline HTTP tests that inject a stub `IHttpClientFactory` to exercise `TryConnect`/auth without a live server.
 - **Integration tests** (`Integration/`, `[TestCategory("Integration")]`): hit a live Azure DevOps org, gated on env vars — required `AZDO_ORG` + `AZDO_PAT`, optional `AZDO_PROJECT` / `AZDO_FEED`. When unset they `Assert.Inconclusive` (skip, not fail). `IntegrationConfig` reads the vars and builds connections/providers. All read-only.
