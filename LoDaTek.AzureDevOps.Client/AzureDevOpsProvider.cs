@@ -43,6 +43,7 @@ public class AzureDevOpsProvider
     private GalleryHttpClient _galleryClient;
     private TaskAgentHttpClient _taskAgentHttpClient;
     private PipelinesHttpClient _pipelinesHttpClient;
+    private TeamHttpClient _teamClient;
 
     IDevOpsConnection _restApiConnection;
 
@@ -288,6 +289,20 @@ public class AzureDevOpsProvider
         }
     }
 
+    /// <summary>
+    /// Gets the pipelines client.
+    /// </summary>
+    /// <value>The pipelines client.</value>
+    public TeamHttpClient TeamClient
+    {
+        get
+        {
+            if (_teamClient == null)
+                _teamClient = Connection.GetClient<TeamHttpClient>();
+
+            return _teamClient;
+        }
+    }
     #endregion
 
     #region Constructors
