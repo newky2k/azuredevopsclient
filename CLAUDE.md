@@ -24,7 +24,15 @@ dotnet test LoDaTek.AzureDevOps.Tests/LoDaTek.AzureDevOps.Tests.csproj   # unit 
 
 Both libraries multi-target `netstandard2.0;net9.0;net10.0`. The `netstandard2.0` target gets extra `System.Net.Http.Json` / `System.Text.Json` package references (see conditional `ItemGroup` in Services.Client csproj) — preserve that when touching JSON code so netstandard keeps compiling.
 
-`LoDaTek.AzureDevOps.Tests` (MSTest, net9.0) holds the unit tests — pure-logic coverage (connection URLs, `WiqlBuilder`, DI registration) plus offline HTTP tests that inject a stub `IHttpClientFactory` to exercise `TryConnect`/auth without a live server. It overrides the signing/packaging defaults from `Directory.Build.props`. Live API calls remain manual via `TestApp`.
+`LoDaTek.AzureDevOps.Tests` (MSTest, net9.0) holds the tests. It overrides the signing/packaging defaults from `Directory.Build.props`.
+
+- **Unit tests** (always run): pure-logic coverage (connection URLs, `WiqlBuilder`, DI registration) plus offline HTTP tests that inject a stub `IHttpClientFactory` to exercise `TryConnect`/auth without a live server.
+- **Integration tests** (`Integration/`, `[TestCategory("Integration")]`): hit a live Azure DevOps org, gated on env vars — required `AZDO_ORG` + `AZDO_PAT`, optional `AZDO_PROJECT` / `AZDO_FEED`. When unset they `Assert.Inconclusive` (skip, not fail). `IntegrationConfig` reads the vars and builds connections/providers. All read-only.
+
+```
+dotnet test --filter TestCategory!=Integration   # unit only
+dotnet test --filter TestCategory=Integration     # integration only (needs env vars)
+```
 
 ## Architecture (Services.Client)
 
