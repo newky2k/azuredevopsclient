@@ -44,7 +44,7 @@ public class HttpClientResolutionTests
             HttpClientFactory = new StubHttpClientFactory(handler),
         };
 
-        await Assert.ThrowsExceptionAsync<ConnectionFailureException>(
+        await Assert.ThrowsAsync<ConnectionFailureException>(
             () => connection.GetClientAsync<SecureFilesHttpClient>());
     }
 

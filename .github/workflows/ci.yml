@@ -1,0 +1,36 @@
+# Pull request validation: builds Release and runs the unit tests. Publishes nothing.
+# Integration tests (TestCategory=Integration) are excluded; they need live Azure DevOps credentials.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            10.x
+            11.x
+
+      - name: Restore
+        run: dotnet restore LoDaTek.AzureDevOps.Services.Client.slnx
+
+      - name: Build
+        run: dotnet build LoDaTek.AzureDevOps.Services.Client.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test LoDaTek.AzureDevOps.Tests/LoDaTek.AzureDevOps.Tests.csproj --configuration Release --no-build --filter "TestCategory!=Integration"
